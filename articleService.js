@@ -6,6 +6,7 @@ class Article {
     this.content = content;
     this.writer = writer;
     this._likeCount = likeCount;
+    this.createdAt = new Date() + 9 * 60 * 60 * 1000;
   }
   get likeCount() {
     return this._likeCount;
