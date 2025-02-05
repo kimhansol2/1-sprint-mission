@@ -17,6 +17,7 @@ With javascript:
 All tasks will be implemented asynchronously, not synchronously.
 
 ## Check patch content
+- V0.0.6 Add createdAt to the Article class
 - v0.0.5 Added package files
 - v0.0.4 Configured gitignore file
 - v0.0.3 Main code completed
