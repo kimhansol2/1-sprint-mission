@@ -3,7 +3,11 @@ import NotFoundError from "../lib/errors/NotFoundError.js";
 import commentsRepository from "../repository/commentsRepository.js";
 
 async function create(data) {
-  return productRepository.save(data);
+  const user = await productRepository.save(data);
+  if (user) {
+    console.error("이미 있음");
+  }
+  return user;
 }
 
 async function list(page, pagesize, orderBy, keyword) {

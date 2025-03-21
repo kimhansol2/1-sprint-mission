@@ -9,10 +9,15 @@ import {
   createComment,
   getCommentList,
 } from "../controller/productController.js";
+import passport from "../middlewares/passport.js";
 
 const productRouter = express.Router();
 
-productRouter.post("/", asyncHandler(createProduct));
+productRouter.post(
+  "/",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(createProduct)
+);
 productRouter.get("/", asyncHandler(getProductList));
 productRouter.get("/:id", asyncHandler(getProduct));
 productRouter.patch("/:id", asyncHandler(updateProduct));

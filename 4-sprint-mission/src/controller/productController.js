@@ -14,7 +14,13 @@ import productService from "../services/productService.js";
 export async function createProduct(req, res, next) {
   try {
     const data = create(req.body, CreateProductBodyStruct);
-    const product = await productService.create(data);
+    const user = req.user;
+    const productData = {
+      ...data,
+      userId: user.id,
+    };
+    console.log("Creating product with data:", productData);
+    const product = await productService.create(productData);
 
     res.status(201).json({ message: product });
   } catch (error) {
