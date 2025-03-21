@@ -14,6 +14,7 @@ import articleService from "../services/articleService.js";
 export async function createArticle(req, res, next) {
   try {
     const data = create(req.body, CreateArticleBodyStruct);
+    console.log(data);
     const article = await articleService.create(data);
     res.status(201).send(article);
   } catch (error) {
