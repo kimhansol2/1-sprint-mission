@@ -17,7 +17,10 @@ export async function createArticle(req, res, next) {
     const article = await articleService.create(data);
     res.status(201).send(article);
   } catch (error) {
-    next(error);
+    if (error.name === "StructError") {
+      return res.status(400).json({ error: "Invalid article data" });
+    }
+    return next(error);
   }
 }
 
@@ -28,25 +31,29 @@ export async function getArticleList(req, res, next) {
 
     res.send(result);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
-export async function getArticle(req, res) {
+export async function getArticle(req, res, next) {
   try {
     const { id } = create(req.params, IdParamsStruct);
     const article = await articleService.getById(id);
     res.send(article);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
-export async function updateArticle(req, res) {
-  const { id } = create(req.params, IdParamsStruct);
-  const data = create(req.body, UpdateArticleBodyStruct);
-  const article = await articleService.update(id, data);
-  res.send(article);
+export async function updateArticle(req, res, next) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    const data = create(req.body, UpdateArticleBodyStruct);
+    const article = await articleService.update(id, data);
+    res.send(article);
+  } catch (error) {
+    return next(error);
+  }
 }
 
 export async function deleteArticle(req, res) {
@@ -56,7 +63,7 @@ export async function deleteArticle(req, res) {
     await articleService.deleteById(id);
     return res.status(204).send();
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -71,7 +78,7 @@ export async function createComment(req, res, next) {
 
     return res.status(201).send(comment);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -89,6 +96,6 @@ export async function getCommentList(req, res, next) {
 
     return res.send({ result });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }

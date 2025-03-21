@@ -1,5 +1,5 @@
 import express from "express";
-import { asyncHandler } from "../lib/async-handler";
+import { asyncHandler } from "../lib/async-handler.js";
 import {
   createArticle,
   getArticleList,

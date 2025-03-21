@@ -8,7 +8,7 @@ import {
   array,
   integer,
 } from "superstruct";
-import { PageParamsStruct } from "./commonStruct";
+import { PageParamsStruct } from "./commonStruct.js";
 
 export const CreateProductBodyStruct = object({
   name: coerce(nonempty(string()), string(), (value) => value.trim()),

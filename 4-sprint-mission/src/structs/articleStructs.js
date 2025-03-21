@@ -3,17 +3,17 @@ import {
   string,
   object,
   nonempty,
-  partical,
+  partial,
   nullable,
 } from "superstruct";
-import { PageParamsStruct } from "./commonStruct";
+import { PageParamsStruct } from "./commonStruct.js";
 
 export const GetArticleListParamsStruct = PageParamsStruct;
 
 export const CreateArticleBodyStruct = object({
-  title: coerce(nonempty(string())),
+  title: nonempty(string()),
   content: nonempty(string()),
   image: nullable(string()),
 });
 
-export const UpdateArticleBodyStruct = partical(CreateArticleBodyStruct);
+export const UpdateArticleBodyStruct = partial(CreateArticleBodyStruct);

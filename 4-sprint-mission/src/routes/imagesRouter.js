@@ -1,5 +1,5 @@
 import express from "express";
-import { asyncHandler } from "../lib/async-handler";
+import { asyncHandler } from "../lib/async-handler.js";
 import { upload, uploadImage } from "../controller/imagesController.js";
 
 const imagesRouter = express.Router();

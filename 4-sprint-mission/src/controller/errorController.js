@@ -16,7 +16,7 @@ export function globalErrorHandler(err, req, res, next) {
   }
 
   if (err.code) {
-    console.err(err);
+    console.error(err);
     return res.status(500).send({ message: "Failed to process data" });
   }
 

@@ -1,6 +1,6 @@
 import { create } from "superstruct";
-import { UpdateCommentBodyStruct } from "../structs/commentsStruct";
-import { IdParamsStruct } from "../structs/commonStruct";
+import { UpdateCommentBodyStruct } from "../structs/commentsStruct.js";
+import { IdParamsStruct } from "../structs/commonStruct.js";
 import commentsService from "../services/commentsService.js";
 
 //.route("/:id").patch(asyncHandler(
@@ -14,7 +14,7 @@ export async function updateComment(req, res, next) {
     const comment = await commentsService.update(id, content);
     res.send(comment);
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
@@ -29,6 +29,6 @@ export async function deleteComment(req, res, next) {
 
     return res.status(204).send(); // 요청이 성공적으로 처리되면 no content를 보냄
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }

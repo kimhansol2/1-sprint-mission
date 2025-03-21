@@ -1,7 +1,8 @@
-import commentsRepository from "../repository/commentsRepository";
+import commentsRepository from "../repository/commentsRepository.js";
+import NotFoundError from "../lib/errors/NotFoundError.js";
 
 async function findById(id) {
-  existingComment = await commentsRepository.findById(id);
+  const existingComment = await commentsRepository.findById(id);
   if (!existingComment) {
     throw new NotFoundError("article", id);
   }

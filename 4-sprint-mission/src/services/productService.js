@@ -1,12 +1,14 @@
-import productRepository from "../repository/productRepository";
-import NotFoundError from "../lib/errors/NotFoundError";
-import commentsRepository from "../repository/commentsRepository";
+import productRepository from "../repository/productRepository.js";
+import NotFoundError from "../lib/errors/NotFoundError.js";
+import commentsRepository from "../repository/commentsRepository.js";
 
 async function create(data) {
   return productRepository.save(data);
 }
 
 async function list(page, pagesize, orderBy, keyword) {
+  page = page > 0 ? page : 1;
+  pagesize = pagesize > 0 ? pagesize : 10;
   return productRepository.list(page, pagesize, orderBy, keyword);
 }
 
@@ -15,15 +17,21 @@ async function count(keyword) {
 }
 
 async function getById(id) {
-  product = await productRepository.getById(id);
-  if (!product) {
+  const existingProduct = await productRepository.getById(id);
+  if (!existingProduct) {
     throw new NotFoundError("product", id);
   }
-  return product;
+  return existingProduct;
 }
 
-async function update(id, content) {
-  return productRepository.update(id, content);
+async function update(id, { name, description, price, tags, images }) {
+  return productRepository.update(id, {
+    name,
+    description,
+    price,
+    tags,
+    images,
+  });
 }
 
 async function deleteId(id) {

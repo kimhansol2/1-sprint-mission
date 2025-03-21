@@ -8,6 +8,10 @@ async function create(article) {
 
 async function getList({ page, pagesize, orderBy, keyword }) {
   const totalCount = await articleRepository.countArticle(keyword);
+
+  page = page > 0 ? page : 1;
+  pagesize = pagesize > 0 ? pagesize : 10;
+
   const articles = await articleRepository.findArticle(
     page,
     pagesize,
@@ -18,7 +22,7 @@ async function getList({ page, pagesize, orderBy, keyword }) {
 }
 
 async function getById(id) {
-  const existingArticle = await articleRepository.getById(id);
+  const existingArticle = await articleRepository.findById(id);
 
   if (!existingArticle) {
     throw new NotFoundError("article", id);

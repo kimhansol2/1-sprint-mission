@@ -5,6 +5,7 @@ async function save(data) {
     data: {
       title: data.title,
       content: data.content,
+      image: data.image,
     },
   });
 }
@@ -29,10 +30,10 @@ async function countArticle(keyword) {
   });
 }
 
-async function findArticle(page, pageSize, orderBy, keyword) {
+async function findArticle(page, pagesize, orderBy, keyword) {
   return prisma.article.findMany({
-    skip: (page - 1) * pageSize,
-    take: pageSize,
+    skip: (page - 1) * pagesize,
+    take: pagesize,
     orderBy: orderBy === "recent" ? { createdAt: "desc" } : { id: "asc" },
     where: keyword ? { title: { contains: keyword } } : undefined,
   });

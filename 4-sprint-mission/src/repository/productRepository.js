@@ -1,4 +1,4 @@
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
 
 async function save(data) {
   return prisma.product.create({ data });
@@ -29,20 +29,19 @@ async function count(keyword) {
 async function getById(id) {
   return prisma.product.findUnique({
     where: { id },
-    select: {
-      name: true,
-      description: true,
-      price: true,
-      tags: true,
-      createdAt: true,
-    },
   });
 }
 
-async function update(id, content) {
+async function update(id, { name, description, price, tags, images }) {
   return prisma.product.update({
     where: { id },
-    data: { content },
+    data: {
+      name,
+      description,
+      price,
+      tags: { set: tags },
+      images: { set: images },
+    },
   });
 }
 

@@ -12,19 +12,13 @@ async function findCommentsByProduct(productId, cursor, limit) {
   return prisma.comment.findMany({
     cursor: cursor ? { id: cursor } : undefined,
     take: limit,
-    where: { articleId },
+    where: { productId },
     orderBy: { createdAt: "desc" },
   });
 }
 
 async function findById(id) {
-  const existingComment = await prisma.comment.findUnique({ where: { id } });
-
-  if (!existingComment) {
-    throw new NotFoundError("comment", id);
-  }
-
-  return existingComment;
+  return prisma.comment.findUnique({ where: { id } });
 }
 
 async function update(id, content) {

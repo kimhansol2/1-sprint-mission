@@ -3,7 +3,7 @@ import {
   updateComment,
   deleteComment,
 } from "../controller/commentsController.js";
-import { asyncHandler } from "../lib/async-handler";
+import { asyncHandler } from "../lib/async-handler.js";
 
 const commentRouter = express.Router();
 
