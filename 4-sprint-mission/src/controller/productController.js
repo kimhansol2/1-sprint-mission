@@ -3,94 +3,98 @@ import {
   GetProductListParamsStruct,
   UpdateProductBodyStruct,
 } from "../structs/prodcutsStruct.js";
-import prisma from "../lib/prisma";
 import { IdParamsStruct } from "../structs/commonStruct";
 import { create } from "superstruct";
-import NotFoundError from "../lib/errors/NotFoundError";
+import productService from "../services/productService.js";
 
-//productRouter.route("/").post(asyncHandler(async
-export async function createProduct(req, res) {
-  const data = create(req.body, CreateProductBodyStruct);
-  const product = await prisma.product.create({ data });
+export async function createProduct(req, res, error) {
+  try {
+    const data = create(req.body, CreateProductBodyStruct);
+    const product = await productService.create(data);
 
-  res.status(201).json({ message: product });
-}
-
-//.get(async
-export async function getProductList(req, res) {
-  const { page, pagesize, orderBy, keyword } = create(
-    req.query,
-    GetProductListParamsStruct
-  );
-
-  const where = keyword
-    ? {
-        OR: [
-          { name: { contains: keyword } },
-          { description: { contains: keyword } },
-        ],
-      }
-    : undefined;
-
-  const totalCount = await prisma.product.count({ where });
-  const products = await prisma.product.findMany({
-    skip: (page - 1) * pagesize,
-    take: pagesize,
-    orderBy: orderBy === "recent" ? { id: "desc" } : { id: "asc" },
-    where,
-  });
-
-  return res.send({ list: products, totalCount });
-}
-
-//productRouter.route("/:id").get(asyncHandler(
-export async function getProduct(req, res) {
-  const { id } = create(req.params, IdParamsStruct);
-  const product = await prisma.product.findUnique({
-    where: { id },
-    select: {
-      name: true,
-      description: true,
-      price: true,
-      tags: true,
-      createdAt: true,
-    },
-  });
-  if (!product) {
-    throw new NotFoundError("product", id);
+    res.status(201).json({ message: product });
+  } catch (error) {
+    next(error);
   }
-
-  return res.send(product);
 }
 
-//.patch(asyncHandler(
-export async function updateProduct(req, res) {
-  const { id } = create(req.params, IdParamsStruct);
-  const { content } = create(req.body, UpdateProductBodyStruct);
-  const existingProduct = await prisma.product.findUnique({ where: { id } });
-
-  if (!existingProduct) {
-    throw new NotFoundError("product", id);
+export async function getProductList(req, res, next) {
+  try {
+    const { page, pagesize, orderBy, keyword } = create(
+      req.query,
+      GetProductListParamsStruct
+    );
+    totalCount = await productService.count(keyword);
+    products = await productService.list(page, pagesize, orderBy, keyword);
+    return res.send({ list: products, totalCount });
+  } catch (error) {
+    next(error);
   }
-  const product = await prisma.product.update({
-    where: { id },
-    data: { content },
-  });
-  return res.send(product);
 }
 
-//.delete(async
-export async function deleteProduct(req, res) {
-  const { id } = create(req.params, IdParamsStruct);
-  const existingProduct = await prisma.product.findUnique({ where: id });
-  if (!existingProduct) {
-    throw new NotFoundError("product", id);
+export async function getProduct(req, res, next) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    product = productService.getById(id);
+
+    return res.send(product);
+  } catch (error) {
+    next(error);
   }
-
-  await prisma.product.delete({
-    where: { id },
-  });
-  res.status(204).send();
 }
 
-export default productRouter;
+export async function updateProduct(req, res, next) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    const { content } = create(req.body, UpdateProductBodyStruct);
+    await productService.getById(id);
+    product = await productService.update(id, content);
+    return res.send(product);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteProduct(req, res, next) {
+  try {
+    const { id } = create(req.params, IdParamsStruct);
+    await productService.getById(id);
+    await productService.deleteId(id);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createComment(req, res, next) {
+  try {
+    const { id: productId } = create(req.params, IdParamsStruct);
+    const { content } = create(req.body, CreateCommentBodyStruct);
+
+    await productService.getById(productId);
+
+    const comment = await productService.commentProduct(productId, content);
+
+    return res.status(201).send(comment);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getCommentList(req, res, next) {
+  try {
+    const { id: productId } = create(req.params, IdParamsStruct);
+    const { cursor, limit } = create(req.query, getCommentListParamsStruct);
+
+    await productService.getById(productId);
+    const result = await productService.findCommentsByProduct(
+      productId,
+      cursor,
+      limit
+    );
+
+    return res.send({ result });
+  } catch (error) {
+    next(error);
+  }
+}

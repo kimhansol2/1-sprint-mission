@@ -6,6 +6,8 @@ import {
   getProductList,
   updateProduct,
   deleteProduct,
+  createComment,
+  getCommentList,
 } from "../controller/productController";
 
 const productRouter = express.Router();
@@ -15,3 +17,5 @@ productRouter.get("/", asyncHandler(getProductList));
 productRouter.get("/:id", asyncHandler(getProduct));
 productRouter.patch("/:id", asyncHandler(updateProduct));
 productRouter.delete("/:id", asyncHandler(deleteProduct));
+productRouter.post("/:id/comments", asyncHandler(createComment));
+productRouter.get("/:id/comments", asyncHandler(getCommentList));
