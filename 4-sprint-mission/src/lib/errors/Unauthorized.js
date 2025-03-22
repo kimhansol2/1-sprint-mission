@@ -1,6 +1,6 @@
 class UnauthorizedError extends Error {
-  constructor(field) {
-    super(`${field} non-user attempted to log in`);
+  constructor(modelName, id) {
+    super(`${modelName} with id ${id} not found`);
     this.name = "UnauthorizedError";
   }
 }

@@ -1,27 +1,11 @@
 import prisma from "../lib/prisma.js";
 
 async function save(data) {
-  return prisma.article.create({
-    data: {
-      title: data.title,
-      content: data.content,
-      image: data.image,
-    },
-  });
+  return prisma.article.create({ data });
 }
 
 async function findById(id) {
-  return prisma.article.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      createdAt: true,
-    },
-  });
+  return prisma.article.findUnique({ where: { id } });
 }
 
 async function countArticle(keyword) {

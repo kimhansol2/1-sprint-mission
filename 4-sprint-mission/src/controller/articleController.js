@@ -15,7 +15,13 @@ export async function createArticle(req, res, next) {
   try {
     const data = create(req.body, CreateArticleBodyStruct);
     console.log(data);
-    const article = await articleService.create(data);
+    const user = req.user;
+    const articleData = {
+      ...data,
+      userId: user.id,
+    };
+    console.log(articleData);
+    const article = await articleService.create(articleData);
     res.status(201).send(article);
   } catch (error) {
     if (error.name === "StructError") {
