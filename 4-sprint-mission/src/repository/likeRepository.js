@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
-async function like(userId, productId) {
-  return prisma.like.findUnique({
+async function productLike(userId, productId) {
+  return prisma.productLike.findUnique({
     where: {
       userId_productId: {
         userId,
@@ -11,8 +11,8 @@ async function like(userId, productId) {
   });
 }
 
-async function likeCancel(userId, productId) {
-  return prisma.like.delete({
+async function productLikeCancel(userId, productId) {
+  return prisma.productLike.delete({
     where: {
       userId_productId: {
         userId,
@@ -22,17 +22,53 @@ async function likeCancel(userId, productId) {
   });
 }
 
-async function likeCreate(userId, productId) {
-  return prisma.like.create({
+async function prouductLikeCreate(userId, productId, isLiked) {
+  return prisma.productLike.create({
     data: {
       userId,
       productId,
+      isLiked: isLiked,
+    },
+  });
+}
+
+async function articleLike(userId, articleId) {
+  return prisma.articleLike.findUnique({
+    where: {
+      userId_articleId: {
+        userId,
+        articleId,
+      },
+    },
+  });
+}
+
+async function articleLikeCancel(userId, articleId) {
+  return prisma.articleLike.delete({
+    where: {
+      userId_articleId: {
+        userId,
+        articleId,
+      },
+    },
+  });
+}
+
+async function articleLikeCreate(userId, articleId, isLiked) {
+  return prisma.articleLike.create({
+    data: {
+      userId,
+      articleId,
+      isLiked: isLiked,
     },
   });
 }
 
 export default {
-  like,
-  likeCancel,
-  likeCreate,
+  productLike,
+  productLikeCancel,
+  prouductLikeCreate,
+  articleLike,
+  articleLikeCancel,
+  articleLikeCreate,
 };

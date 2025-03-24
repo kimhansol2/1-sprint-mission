@@ -14,12 +14,18 @@ async function countArticle(keyword) {
   });
 }
 
-async function findArticle(page, pagesize, orderBy, keyword) {
+async function findArticle(userId, page, pagesize, orderBy, keyword) {
   return prisma.article.findMany({
     skip: (page - 1) * pagesize,
     take: pagesize,
     orderBy: orderBy === "recent" ? { createdAt: "desc" } : { id: "asc" },
     where: keyword ? { title: { contains: keyword } } : undefined,
+    include: {
+      ArticleLike: {
+        where: { userId: userId },
+        select: { isLiked: true },
+      },
+    },
   });
 }
 

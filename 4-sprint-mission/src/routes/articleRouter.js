@@ -8,6 +8,7 @@ import {
   deleteArticle,
   createComment,
   getCommentList,
+  articleLike,
 } from "../controller/articleController.js";
 import passport from "../middlewares/passport.js";
 import { verifyarticleAuth } from "../middlewares/jwtAuth.js";
@@ -19,7 +20,11 @@ articlesRouter.post(
   passport.authenticate("accessToken", { session: false }),
   asyncHandler(createArticle)
 );
-articlesRouter.get("/", asyncHandler(getArticleList));
+articlesRouter.get(
+  "/",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(getArticleList)
+);
 articlesRouter.get("/:id", asyncHandler(getArticle));
 articlesRouter.patch(
   "/:id",
@@ -39,5 +44,10 @@ articlesRouter.post(
   asyncHandler(createComment)
 );
 articlesRouter.get("/:id/comments", asyncHandler(getCommentList));
+articlesRouter.post(
+  "/:id/likes",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(articleLike)
+);
 
 export default articlesRouter;

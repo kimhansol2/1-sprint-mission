@@ -20,7 +20,11 @@ productRouter.post(
   passport.authenticate("accessToken", { session: false }),
   asyncHandler(createProduct)
 );
-productRouter.get("/", asyncHandler(getProductList));
+productRouter.get(
+  "/",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(getProductList)
+);
 productRouter.get("/:id", asyncHandler(getProduct));
 productRouter.patch(
   "/:id",

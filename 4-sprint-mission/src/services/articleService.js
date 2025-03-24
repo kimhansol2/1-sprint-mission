@@ -6,19 +6,28 @@ async function create(article) {
   return await articleRepository.save(article);
 }
 
-async function getList({ page, pagesize, orderBy, keyword }) {
+async function getList(userId, { page, pagesize, orderBy, keyword }) {
   const totalCount = await articleRepository.countArticle(keyword);
 
   page = page > 0 ? page : 1;
   pagesize = pagesize > 0 ? pagesize : 10;
 
   const articles = await articleRepository.findArticle(
+    userId,
     page,
     pagesize,
     orderBy,
     keyword
   );
-  return { list: articles, totalCount };
+  return {
+    list: articles.map((article) => ({
+      ...article,
+      isLiked:
+        article.ArticleLike.length > 0 ? article.ArticleLike[0].isLiked : false,
+      ArticleLike: undefined,
+    })),
+    totalCount,
+  };
 }
 
 async function getById(id) {

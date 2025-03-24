@@ -10,10 +10,26 @@ async function create(data) {
   return user;
 }
 
-async function list(page, pagesize, orderBy, keyword) {
+async function list(userId, page, pagesize, orderBy, keyword) {
+  const totalCount = await productRepository.count(keyword);
   page = page > 0 ? page : 1;
   pagesize = pagesize > 0 ? pagesize : 10;
-  return productRepository.list(page, pagesize, orderBy, keyword);
+  const products = await productRepository.list(
+    userId,
+    page,
+    pagesize,
+    orderBy,
+    keyword
+  );
+  return {
+    list: products.map((product) => ({
+      ...product,
+      isLiked:
+        product.ProductLike.length > 0 ? product.ProductLike[0].isLiked : false,
+      ProductLike: undefined,
+    })),
+    totalCount,
+  };
 }
 
 async function count(keyword) {

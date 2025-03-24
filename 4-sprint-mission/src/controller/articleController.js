@@ -10,6 +10,8 @@ import {
   getCommentListParamsStruct,
 } from "../structs/commentsStruct.js";
 import articleService from "../services/articleService.js";
+import likeRepository from "../repository/likeRepository.js";
+import likeServices from "../services/likeServices.js";
 
 export async function createArticle(req, res, next) {
   try {
@@ -34,7 +36,8 @@ export async function createArticle(req, res, next) {
 export async function getArticleList(req, res, next) {
   try {
     const params = create(req.query, GetArticleListParamsStruct);
-    const result = await articleService.getList(params);
+    const userId = req.user.id;
+    const result = await articleService.getList(userId, params);
 
     res.send(result);
   } catch (error) {
@@ -102,6 +105,18 @@ export async function getCommentList(req, res, next) {
     );
 
     return res.send({ result });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function articleLike(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const articleId = parseInt(req.params.id);
+    const result = await likeServices.likeArticleFind(userId, articleId);
+
+    res.status(200).json(result);
   } catch (error) {
     return next(error);
   }

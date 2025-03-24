@@ -5,7 +5,7 @@ async function save(data) {
   return prisma.product.create({ data });
 }
 
-async function list(page, pagesize, orderBy, keyword) {
+async function list(userId, page, pagesize, orderBy, keyword) {
   return prisma.product.findMany({
     skip: (page - 1) * pagesize,
     take: pagesize,
@@ -18,6 +18,12 @@ async function list(page, pagesize, orderBy, keyword) {
           ],
         }
       : undefined,
+    include: {
+      ProductLike: {
+        where: { userId: userId },
+        select: { isLiked: true },
+      },
+    },
   });
 }
 
