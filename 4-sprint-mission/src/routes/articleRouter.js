@@ -33,7 +33,11 @@ articlesRouter.delete(
   verifyarticleAuth,
   asyncHandler(deleteArticle)
 );
-articlesRouter.post("/:id/comments", asyncHandler(createComment));
+articlesRouter.post(
+  "/:id/comments",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(createComment)
+);
 articlesRouter.get("/:id/comments", asyncHandler(getCommentList));
 
 export default articlesRouter;

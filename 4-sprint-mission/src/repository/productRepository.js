@@ -52,6 +52,15 @@ async function deleteId(id) {
   });
 }
 
+async function userProduct(id, { page, pagesize, orderBy }) {
+  return prisma.product.findMany({
+    where: { userId: id },
+    skip: (page - 1) * pagesize,
+    take: pagesize,
+    orderBy: orderBy === "recent" ? { id: "desc" } : { id: "asc" },
+  });
+}
+
 export default {
   save,
   list,
@@ -59,4 +68,5 @@ export default {
   getById,
   update,
   deleteId,
+  userProduct,
 };

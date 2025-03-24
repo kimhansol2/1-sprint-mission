@@ -94,10 +94,14 @@ export async function createComment(req, res, next) {
   try {
     const { id: productId } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, CreateCommentBodyStruct);
-
+    const user = req.user.id;
     await productService.getById(productId);
 
-    const comment = await productService.commentProduct(productId, content);
+    const comment = await productService.commentProduct(
+      productId,
+      content,
+      user
+    );
 
     return res.status(201).send(comment);
   } catch (error) {

@@ -78,10 +78,10 @@ export async function createComment(req, res, next) {
   try {
     const { id: articleId } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, CreateCommentBodyStruct);
-
+    console.log(content);
+    const user = req.user.id;
     await articleService.getById(articleId);
-
-    const comment = await articleService.saveComment(articleId, content);
+    const comment = await articleService.saveComment(articleId, content, user);
 
     return res.status(201).send(comment);
   } catch (error) {

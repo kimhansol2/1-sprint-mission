@@ -15,12 +15,55 @@ export async function createUser(req, res, next) {
   }
 }
 
-export async function getUser(req, res, next) {
+export async function loginUser(req, res, next) {
   try {
     const user = req.user;
     const accessToken = userService.createToken(user);
 
     return res.json({ accessToken });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function getUser(req, res, next) {
+  try {
+    const user = req.user.id;
+    const result = await userService.getUserById(user);
+    res.json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function updateUser(req, res, next) {
+  try {
+    const user = req.user.id;
+    const { email, nickname, image, password } = req.body;
+    const result = await userService.update(user, {
+      email,
+      nickname,
+      image,
+      password,
+    });
+
+    res.json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function userProductList(req, res, next) {
+  try {
+    const user = req.user.id;
+    const { page, pagesize, orderBy } = req.query;
+    const result = await userService.getProductList(user, {
+      page,
+      pagesize,
+      orderBy,
+    });
+
+    res.json(result);
   } catch (error) {
     return next(error);
   }

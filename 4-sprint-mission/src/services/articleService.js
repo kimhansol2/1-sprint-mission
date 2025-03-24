@@ -38,8 +38,8 @@ async function deleteById(id) {
   return articleRepository.deleteById(id);
 }
 
-async function saveComment(articleId, content) {
-  return commentsRepository.commentArticle(articleId, content);
+async function saveComment(articleId, content, user) {
+  return commentsRepository.commentArticle(articleId, content, user);
 }
 
 async function findCommentsByArticle(articleId, cursor, limit) {

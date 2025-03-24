@@ -33,7 +33,11 @@ productRouter.delete(
   verifyproductAuth,
   asyncHandler(deleteProduct)
 );
-productRouter.post("/:id/comments", asyncHandler(createComment));
+productRouter.post(
+  "/:id/comments",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(createComment)
+);
 productRouter.get("/:id/comments", asyncHandler(getCommentList));
 
 export default productRouter;

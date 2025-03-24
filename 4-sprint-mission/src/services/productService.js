@@ -42,8 +42,8 @@ async function deleteId(id) {
   return productRepository.deleteId(id);
 }
 
-async function commentProduct(productId, content) {
-  return commentsRepository.commentProduct(productId, content);
+async function commentProduct(productId, content, user) {
+  return commentsRepository.commentProduct(productId, content, user);
 }
 
 async function findCommentsByProduct(productId, cursor, limit) {

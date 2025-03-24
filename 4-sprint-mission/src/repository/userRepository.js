@@ -18,8 +18,16 @@ async function findId(id) {
   return prisma.user.findUnique({ where: { id } });
 }
 
+async function update(id, { email, nickname, image, password }) {
+  return prisma.user.update({
+    where: { id },
+    data: { email, nickname, image, password },
+  });
+}
+
 export default {
   save,
   findEmail,
   findId,
+  update,
 };

@@ -31,15 +31,6 @@ async function deleteById(id) {
   return await prisma.article.delete({ where: { id } });
 }
 
-async function saveComment(articleId, content) {
-  return await prisma.comment.create({
-    data: {
-      articleId,
-      content,
-    },
-  });
-}
-
 export default {
   save,
   findById,
@@ -47,5 +38,4 @@ export default {
   findArticle,
   update,
   deleteById,
-  saveComment,
 };

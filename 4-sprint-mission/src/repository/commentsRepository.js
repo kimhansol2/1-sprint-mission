@@ -34,20 +34,22 @@ async function deleteId(id) {
   });
 }
 
-async function commentArticle(articleId, content) {
+async function commentArticle(articleId, content, user) {
   return await prisma.comment.create({
     data: {
-      articleId,
       content,
+      article: { connect: { id: articleId } },
+      user: { connect: { id: user } },
     },
   });
 }
 
-async function commentProduct(productId, content) {
+async function commentProduct(productId, content, user) {
   return await prisma.comment.create({
     data: {
-      productId,
       content,
+      product: { connect: { id: productId } },
+      user: { connect: { id: user } },
     },
   });
 }
