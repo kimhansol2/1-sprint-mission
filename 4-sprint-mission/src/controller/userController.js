@@ -22,7 +22,11 @@ export async function loginUser(req, res, next) {
     const refreshToken = userService.createToken(user, "refresh");
 
     await userService.update(user.id, { refreshToken });
-
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
     return res.json({ accessToken });
   } catch (error) {
     return next(error);
@@ -67,6 +71,31 @@ export async function userProductList(req, res, next) {
     });
 
     res.json(result);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function userNewToken(req, res, next) {
+  try {
+    const { refreshToken } = req.cookies;
+    const { id } = req.user;
+    console.log("id테스트", id);
+
+    const { accessToken, newRefreshToken } = await userService.refreshToken(
+      id,
+      refreshToken
+    );
+
+    await userService.update(id, { refreshToken: newRefreshToken });
+    res.cookie("refreshToken", newRefreshToken, {
+      path: "/token/refresh",
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
+    return res.json({ accessToken });
   } catch (error) {
     return next(error);
   }

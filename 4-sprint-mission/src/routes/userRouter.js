@@ -6,6 +6,7 @@ import {
   loginUser,
   updateUser,
   userProductList,
+  userNewToken,
 } from "../controller/userController.js";
 import passport from "../middlewares/passport.js";
 import { verifyuserAuth } from "../middlewares/jwtAuth.js";
@@ -36,6 +37,12 @@ userRouter.get(
   passport.authenticate("accessToken", { session: false }),
   verifyuserAuth,
   asyncHandler(userProductList)
+);
+
+userRouter.post(
+  "/token/refresh",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(userNewToken)
 );
 
 export default userRouter;

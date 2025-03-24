@@ -63,13 +63,14 @@ async function getUserById(id) {
   return filterSensitiveUserData(user);
 }
 
-async function update(id, { email, nickname, image, password }) {
+async function update(id, { email, nickname, image, password, refreshToken }) {
   const updatedField = {};
   if (email !== undefined) updatedField.email = email;
   if (nickname !== undefined) updatedField.nickname = nickname;
   if (image !== undefined) updatedField.image = image;
   if (password !== undefined)
     updatedField.password = await hashingPassword(password);
+  if (refreshToken !== undefined) updatedField.refreshToken = refreshToken;
 
   const user = await userRepository.update(id, updatedField);
 
@@ -86,14 +87,14 @@ async function getProductList(id, { page, pagesize, orderBy }) {
   });
 }
 
-async function refreshToken(userId, refreshToken) {
-  const user = await userRepository.findId(userId);
+async function refreshToken(id, refreshToken) {
+  const user = await userRepository.findId(id);
   if (!user || user.refreshToken !== refreshToken) {
     throw new UnauthorizedError(user);
   }
   const accessToken = createToken(user);
-  const newRetreshToken = createToken(user, "refresh");
-  return { accessToken, newRetreshToken };
+  const newReFreshToken = createToken(user, "refresh");
+  return { accessToken, newReFreshToken };
 }
 
 function filterSensitiveUserData(user) {
@@ -109,4 +110,5 @@ export default {
   getUserById,
   update,
   getProductList,
+  refreshToken,
 };
