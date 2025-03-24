@@ -4,22 +4,10 @@ import {
   deleteComment,
 } from "../controller/commentsController.js";
 import { asyncHandler } from "../lib/async-handler.js";
-import passport from "../middlewares/passport.js";
-import { verifycommentAuth } from "../middlewares/jwtAuth.js";
 
 const commentRouter = express.Router();
 
-commentRouter.patch(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifycommentAuth,
-  asyncHandler(updateComment)
-);
-commentRouter.delete(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifycommentAuth,
-  asyncHandler(deleteComment)
-);
+commentRouter.patch("/:id", asyncHandler(updateComment));
+commentRouter.delete("/:id", asyncHandler(deleteComment));
 
 export default commentRouter;

@@ -10,44 +10,27 @@ import {
   getCommentList,
   productLike,
 } from "../controller/productController.js";
-import passport from "../middlewares/passport.js";
-import { verifyproductAuth } from "../middlewares/jwtAuth.js";
+import Auth from "../middlewares/Auth.js";
 
 const productRouter = express.Router();
 
-productRouter.post(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createProduct)
-);
-productRouter.get(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(getProductList)
-);
+productRouter.post("/", Auth.verifySessionLogin, asyncHandler(createProduct));
+productRouter.get("/", asyncHandler(getProductList));
 productRouter.get("/:id", asyncHandler(getProduct));
 productRouter.patch(
   "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyproductAuth,
+  Auth.verifySessionLogin,
+  Auth.verifyProductAuth,
   asyncHandler(updateProduct)
 );
 productRouter.delete(
   "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyproductAuth,
+  Auth.verifySessionLogin,
+  Auth.verifyProductAuth,
   asyncHandler(deleteProduct)
 );
-productRouter.post(
-  "/:id/comments",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createComment)
-);
+productRouter.post("/:id/comments", asyncHandler(createComment));
 productRouter.get("/:id/comments", asyncHandler(getCommentList));
-productRouter.post(
-  "/:id/likes",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(productLike)
-);
+productRouter.post("/:id/likes", asyncHandler(productLike));
 
 export default productRouter;

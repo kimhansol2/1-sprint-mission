@@ -18,6 +18,7 @@ export async function createArticle(req, res, next) {
     const data = create(req.body, CreateArticleBodyStruct);
     console.log(data);
     const user = req.user;
+    console.log(user);
     const articleData = {
       ...data,
       userId: user.id,

@@ -33,4 +33,7 @@ export const cookieStruct = object({
 
 export const getUserParamsStruct = PageParamsStruct;
 
-export const updateUserStruct = partial(CreateUserStruct);
+export const updateUserStruct = object({
+  email: nonempty(string()),
+  password: nonempty(string()),
+});

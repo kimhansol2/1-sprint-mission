@@ -26,18 +26,12 @@ export async function createUser(req, res, next) {
 
 export async function loginUser(req, res, next) {
   try {
-    const user = create(req.user, userStruct);
-    console.log(user);
-    const accessToken = userService.createToken(user);
-    const refreshToken = userService.createToken(user, "refresh");
+    const { email, password } = create(req.body, updateUserStruct);
+    const user = await userService.getUser(email, password);
 
-    await userService.update(user.id, { refreshToken });
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
-    return res.json({ accessToken });
+    req.session.userId = user.id;
+    console.log("로그인 성공:", req.session);
+    return res.json(user);
   } catch (error) {
     return next(error);
   }
@@ -45,7 +39,6 @@ export async function loginUser(req, res, next) {
 
 export async function getUser(req, res, next) {
   try {
-    //안됨
     console.log(req.user);
     const user = create(req.user, userStruct);
     const result = await userService.getUserById(user.id);

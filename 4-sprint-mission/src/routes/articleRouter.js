@@ -10,44 +10,27 @@ import {
   getCommentList,
   articleLike,
 } from "../controller/articleController.js";
-import passport from "../middlewares/passport.js";
-import { verifyarticleAuth } from "../middlewares/jwtAuth.js";
+import Auth from "../middlewares/Auth.js";
 
 const articlesRouter = express.Router();
 
-articlesRouter.post(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createArticle)
-);
-articlesRouter.get(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(getArticleList)
-);
+articlesRouter.post("/", Auth.verifySessionLogin, asyncHandler(createArticle));
+articlesRouter.get("/", asyncHandler(getArticleList));
 articlesRouter.get("/:id", asyncHandler(getArticle));
 articlesRouter.patch(
   "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyarticleAuth,
+  Auth.verifySessionLogin,
+  Auth.verifyArticleAuth,
   asyncHandler(updateArticle)
 );
 articlesRouter.delete(
   "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyarticleAuth,
+  Auth.verifySessionLogin,
+  Auth.verifyArticleAuth,
   asyncHandler(deleteArticle)
 );
-articlesRouter.post(
-  "/:id/comments",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createComment)
-);
+articlesRouter.post("/:id/comments", asyncHandler(createComment));
 articlesRouter.get("/:id/comments", asyncHandler(getCommentList));
-articlesRouter.post(
-  "/:id/likes",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(articleLike)
-);
+articlesRouter.post("/:id/likes", asyncHandler(articleLike));
 
 export default articlesRouter;

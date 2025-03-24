@@ -12,15 +12,25 @@ import {
   globalErrorHandler,
 } from "./controller/errorController.js";
 import cookieParser from "cookie-parser";
-import passport from "passport";
-
+import session from "express-session";
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(STATIC_PATH, express.static(path.resolve(process.cwd(), PUBLIC_PATH)));
 app.use(cookieParser());
 
-app.use(passport.initialize()); // passport 초기화 함수(요청(req)객체에 인증 관련 기능 추가)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
 
 app.use("/products", productRouter);
 app.use("/articles", articleRouter);

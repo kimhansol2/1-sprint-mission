@@ -9,48 +9,16 @@ import {
   userNewToken,
   likeProducts,
 } from "../controller/userController.js";
-import passport from "../middlewares/passport.js";
-import { verifyuserAuth } from "../middlewares/jwtAuth.js";
+import Auth from "../middlewares/Auth.js";
 
 const userRouter = express.Router();
 
 userRouter.post("/", asyncHandler(createUser));
-userRouter.post(
-  "/login",
-  passport.authenticate("local", { session: false }),
-  asyncHandler(loginUser)
-);
-userRouter.get(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyuserAuth,
-  asyncHandler(getUser)
-);
-userRouter.patch(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyuserAuth,
-  asyncHandler(updateUser)
-);
-
-userRouter.get(
-  "/:id/products",
-  passport.authenticate("accessToken", { session: false }),
-  verifyuserAuth,
-  asyncHandler(userProductList)
-);
-
-userRouter.post(
-  "/token/refresh",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(userNewToken)
-);
-
-userRouter.get(
-  "/:id/productLikes",
-  passport.authenticate("accessToken", { session: false }),
-  verifyuserAuth,
-  asyncHandler(likeProducts)
-);
+userRouter.post("/session-login", asyncHandler(loginUser));
+userRouter.get("/:id", asyncHandler(getUser));
+userRouter.patch("/:id", asyncHandler(updateUser));
+userRouter.get("/:id/products", asyncHandler(userProductList));
+userRouter.post("/token/refresh", asyncHandler(userNewToken));
+userRouter.get("/:id/productLikes", asyncHandler(likeProducts));
 
 export default userRouter;
