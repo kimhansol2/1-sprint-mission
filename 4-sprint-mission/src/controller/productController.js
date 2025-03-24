@@ -10,6 +10,7 @@ import {
 import { IdParamsStruct } from "../structs/commonStruct.js";
 import { create } from "superstruct";
 import productService from "../services/productService.js";
+import likeServices from "../services/likeServices.js";
 
 export async function createProduct(req, res, next) {
   try {
@@ -122,6 +123,17 @@ export async function getCommentList(req, res, next) {
     );
 
     return res.send({ result });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function productLike(req, res, next) {
+  try {
+    const productId = parseInt(req.params.id);
+    const userId = req.user.id;
+    const result = await likeServices.likeProductFind(userId, productId);
+    res.status(200).json(result);
   } catch (error) {
     return next(error);
   }

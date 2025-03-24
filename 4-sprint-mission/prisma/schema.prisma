@@ -8,29 +8,31 @@ datasource db {
 }
 
 model Product {
-  id             Int       @id @default(autoincrement())
-  name           String    @unique
+  id             Int           @id @default(autoincrement())
+  name           String        @unique
   description    String
   price          Int
   tags           String[]
   images         String[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   ProductComment Comment[]
-  user           User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
+  Likes          ProductLike[]
 }
 
 model Article {
-  id             Int       @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   title          String
   content        String
   image          String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   ArticleComment Comment[]
-  user           User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
+  ArticleLike    ArticleLike[]
 }
 
 model Comment {
@@ -47,15 +49,37 @@ model Comment {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
   nickname     String
   image        String?
   password     String
   refreshToken String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @default(now()) @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
   Product      Product[]
   Article      Article[]
   Comment      Comment[]
+  Likes        ProductLike[]
+  ArticleLike  ArticleLike[]
+}
+
+model ProductLike {
+  userId    Int
+  productId Int
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, productId])
+}
+
+model ArticleLike {
+  userId    Int
+  articleId Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id])
+
+  @@id([userId, articleId])
 }

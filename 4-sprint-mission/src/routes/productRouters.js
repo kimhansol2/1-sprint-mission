@@ -8,6 +8,7 @@ import {
   deleteProduct,
   createComment,
   getCommentList,
+  productLike,
 } from "../controller/productController.js";
 import passport from "../middlewares/passport.js";
 import { verifyproductAuth } from "../middlewares/jwtAuth.js";
@@ -39,5 +40,10 @@ productRouter.post(
   asyncHandler(createComment)
 );
 productRouter.get("/:id/comments", asyncHandler(getCommentList));
+productRouter.post(
+  "/:id/likes",
+  passport.authenticate("accessToken", { session: false }),
+  asyncHandler(productLike)
+);
 
 export default productRouter;
