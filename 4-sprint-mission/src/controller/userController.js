@@ -1,9 +1,17 @@
 import likeServices from "../services/likeServices.js";
 import userService from "../services/userService.js";
+import {
+  CreateUserStruct,
+  getUserParamsStruct,
+  updateUserStruct,
+  userStruct,
+  cookieStruct,
+} from "../structs/userStructs.js";
+import { create } from "superstruct";
 
 export async function createUser(req, res, next) {
   try {
-    const { email, nickname, password } = req.body;
+    const { email, nickname, password } = create(req.body, CreateUserStruct);
     await userService.findEmail(email);
     const data = await userService.create({ email, nickname, password });
     res.status(201).send({ data });
@@ -18,7 +26,8 @@ export async function createUser(req, res, next) {
 
 export async function loginUser(req, res, next) {
   try {
-    const user = req.user;
+    const user = create(req.user, userStruct);
+    console.log(user);
     const accessToken = userService.createToken(user);
     const refreshToken = userService.createToken(user, "refresh");
 
@@ -36,8 +45,10 @@ export async function loginUser(req, res, next) {
 
 export async function getUser(req, res, next) {
   try {
-    const user = req.user.id;
-    const result = await userService.getUserById(user);
+    //안됨
+    console.log(req.user);
+    const user = create(req.user, userStruct);
+    const result = await userService.getUserById(user.id);
     res.json(result);
   } catch (error) {
     return next(error);
@@ -46,9 +57,12 @@ export async function getUser(req, res, next) {
 
 export async function updateUser(req, res, next) {
   try {
-    const user = req.user.id;
-    const { email, nickname, image, password } = req.body;
-    const result = await userService.update(user, {
+    const user = create(req.user, userStruct);
+    const { email, nickname, image, password } = create(
+      req.body,
+      updateUserStruct
+    );
+    const result = await userService.update(user.id, {
       email,
       nickname,
       image,
@@ -63,9 +77,9 @@ export async function updateUser(req, res, next) {
 
 export async function userProductList(req, res, next) {
   try {
-    const user = req.user.id;
-    const { page, pagesize, orderBy } = req.query;
-    const result = await userService.getProductList(user, {
+    const user = create(req.user, userStruct);
+    const { page, pagesize, orderBy } = create(req.query, getUserParamsStruct);
+    const result = await userService.getProductList(user.id, {
       page,
       pagesize,
       orderBy,
@@ -79,8 +93,8 @@ export async function userProductList(req, res, next) {
 
 export async function userNewToken(req, res, next) {
   try {
-    const { refreshToken } = req.cookies;
-    const { id } = req.user;
+    const { refreshToken } = create(req.cookies, cookieStruct);
+    const { id } = create(req.user, userStruct);
     console.log("id테스트", id);
 
     const { accessToken, newRefreshToken } = await userService.refreshToken(
@@ -104,9 +118,9 @@ export async function userNewToken(req, res, next) {
 
 export async function likeProducts(req, res, next) {
   try {
-    const id = req.user.id;
-    const { page, pagesize } = req.query;
-    const result = await likeServices.productLikedList(id, page, pagesize);
+    const user = create(req.user, userStruct);
+    const { page, pagesize } = create(req.query, getUserParamsStruct);
+    const result = await likeServices.productLikedList(user.id, page, pagesize);
     return res.json(result);
   } catch (error) {
     return next(error);
