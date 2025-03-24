@@ -19,6 +19,9 @@ export async function loginUser(req, res, next) {
   try {
     const user = req.user;
     const accessToken = userService.createToken(user);
+    const refreshToken = userService.createToken(user, "refresh");
+
+    await userService.update(user.id, { refreshToken });
 
     return res.json({ accessToken });
   } catch (error) {

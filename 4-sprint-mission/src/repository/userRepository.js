@@ -18,10 +18,10 @@ async function findId(id) {
   return prisma.user.findUnique({ where: { id } });
 }
 
-async function update(id, { email, nickname, image, password }) {
+async function update(id, updatedField) {
   return prisma.user.update({
     where: { id },
-    data: { email, nickname, image, password },
+    data: updatedField,
   });
 }
 

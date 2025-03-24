@@ -12,7 +12,7 @@ function hashingPassword(password) {
 function createToken(user, type) {
   const payload = { userId: user.id };
   const options = {
-    expiresIn: "1h",
+    expiresIn: type === "refresh" ? "2w" : "1h",
   };
   const token = jwt.sign(payload, process.env.JWT_SECRET, options);
 
@@ -64,13 +64,14 @@ async function getUserById(id) {
 }
 
 async function update(id, { email, nickname, image, password }) {
-  const hashedPassword = await hashingPassword(password);
-  const user = await userRepository.update(id, {
-    email,
-    nickname,
-    image,
-    password: hashedPassword,
-  });
+  const updatedField = {};
+  if (email !== undefined) updatedField.email = email;
+  if (nickname !== undefined) updatedField.nickname = nickname;
+  if (image !== undefined) updatedField.image = image;
+  if (password !== undefined)
+    updatedField.password = await hashingPassword(password);
+
+  const user = await userRepository.update(id, updatedField);
 
   return filterSensitiveUserData(user);
 }
@@ -85,10 +86,21 @@ async function getProductList(id, { page, pagesize, orderBy }) {
   });
 }
 
+async function refreshToken(userId, refreshToken) {
+  const user = await userRepository.findId(userId);
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new UnauthorizedError(user);
+  }
+  const accessToken = createToken(user);
+  const newRetreshToken = createToken(user, "refresh");
+  return { accessToken, newRetreshToken };
+}
+
 function filterSensitiveUserData(user) {
   const { password, ...rest } = user;
   return rest;
 }
+
 export default {
   create,
   findEmail,
