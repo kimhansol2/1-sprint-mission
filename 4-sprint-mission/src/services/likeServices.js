@@ -24,7 +24,14 @@ async function likeArticleFind(userId, articleId) {
   }
 }
 
+async function productLikedList(id, page, pagesize) {
+  page = page > 0 ? page : 1;
+  pagesize = pagesize > 1 ? pagesize : 10;
+  return likeRepository.findLikedProducts(id, page, pagesize);
+}
+
 export default {
   likeProductFind,
   likeArticleFind,
+  productLikedList,
 };

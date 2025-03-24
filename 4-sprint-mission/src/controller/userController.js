@@ -1,3 +1,4 @@
+import likeServices from "../services/likeServices.js";
 import userService from "../services/userService.js";
 
 export async function createUser(req, res, next) {
@@ -96,6 +97,17 @@ export async function userNewToken(req, res, next) {
     });
 
     return res.json({ accessToken });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export async function likeProducts(req, res, next) {
+  try {
+    const id = req.user.id;
+    const { page, pagesize } = req.query;
+    const result = await likeServices.productLikedList(id, page, pagesize);
+    return res.json(result);
   } catch (error) {
     return next(error);
   }

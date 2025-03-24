@@ -7,6 +7,7 @@ import {
   updateUser,
   userProductList,
   userNewToken,
+  likeProducts,
 } from "../controller/userController.js";
 import passport from "../middlewares/passport.js";
 import { verifyuserAuth } from "../middlewares/jwtAuth.js";
@@ -43,6 +44,13 @@ userRouter.post(
   "/token/refresh",
   passport.authenticate("accessToken", { session: false }),
   asyncHandler(userNewToken)
+);
+
+userRouter.get(
+  "/:id/productLikes",
+  passport.authenticate("accessToken", { session: false }),
+  verifyuserAuth,
+  asyncHandler(likeProducts)
 );
 
 export default userRouter;

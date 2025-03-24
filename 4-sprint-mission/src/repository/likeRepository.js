@@ -64,6 +64,20 @@ async function articleLikeCreate(userId, articleId, isLiked) {
   });
 }
 
+async function findLikedProducts(id, page, pagesize) {
+  return prisma.productLike.findMany({
+    where: {
+      userId: id,
+      isLiked: true,
+    },
+    skip: (page - 1) * pagesize,
+    take: pagesize,
+    include: {
+      product: true,
+    },
+  });
+}
+
 export default {
   productLike,
   productLikeCancel,
@@ -71,4 +85,5 @@ export default {
   articleLike,
   articleLikeCancel,
   articleLikeCreate,
+  findLikedProducts,
 };

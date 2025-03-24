@@ -98,7 +98,7 @@ async function refreshToken(id, refreshToken) {
 }
 
 function filterSensitiveUserData(user) {
-  const { password, ...rest } = user;
+  const { password, refreshToken, ...rest } = user;
   return rest;
 }
 
