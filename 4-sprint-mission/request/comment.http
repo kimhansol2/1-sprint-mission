@@ -1,0 +1,26 @@
+###
+POST http://localhost:3000/Comments
+Content-Type: application/json
+
+{
+  "articleId":"3fe21240-8f86-4b43-9aed-f74376aaface",
+  "content":"저요11"
+}
+
+###
+PATCH  http://localhost:3000/Comments/3b0bee80-9be8-41b9-821a-05625a269dd8
+Content-Type: application/json
+
+{
+  "content":"한달째 착용 중 좋아요"
+}
+
+###
+DELETE http://localhost:3000/Comments/3b0bee80-9be8-41b9-821a-05625a269dd8
+
+###
+GET http://localhost:3000/Comments?productId=08de6fbe-c931-440a-a5d3-399703ca4e72&limit=2&cursor=3
+
+
+###
+GET http://localhost:3000/Comments?articleId=3fe21240-8f86-4b43-9aed-f74376aaface&limit=2&cursor=1
