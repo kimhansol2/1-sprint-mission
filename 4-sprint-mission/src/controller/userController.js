@@ -29,9 +29,21 @@ export async function loginUser(req, res, next) {
     const { email, password } = create(req.body, updateUserStruct);
     const user = await userService.getUser(email, password);
 
+    const accessToken = userService.createToken(user);
+    const refreshToken = userService.createToken(user, "refresh");
+
+    await userService.update(user.id, { refreshToken });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
     req.session.userId = user.id;
     console.log("로그인 성공:", req.session);
-    return res.json(user);
+
+    return res.json({ accessToken });
   } catch (error) {
     return next(error);
   }
@@ -50,12 +62,10 @@ export async function getUser(req, res, next) {
 
 export async function updateUser(req, res, next) {
   try {
-    const user = create(req.user, userStruct);
-    const { email, nickname, image, password } = create(
-      req.body,
-      updateUserStruct
-    );
-    const result = await userService.update(user.id, {
+    const user = req.user;
+    const { email, nickname, image, password } = req.body;
+
+    const result = await userService.update(user.userId, {
       email,
       nickname,
       image,
@@ -70,9 +80,9 @@ export async function updateUser(req, res, next) {
 
 export async function userProductList(req, res, next) {
   try {
-    const user = create(req.user, userStruct);
-    const { page, pagesize, orderBy } = create(req.query, getUserParamsStruct);
-    const result = await userService.getProductList(user.id, {
+    const user = req.user;
+    const { page, pagesize, orderBy } = req.query;
+    const result = await userService.getProductList(user.userId, {
       page,
       pagesize,
       orderBy,
@@ -86,8 +96,10 @@ export async function userProductList(req, res, next) {
 
 export async function userNewToken(req, res, next) {
   try {
-    const { refreshToken } = create(req.cookies, cookieStruct);
-    const { id } = create(req.user, userStruct);
+    console.log("req.user:", req.user);
+    console.log("클라이언트에서 받은 refreshToken", req.cookies.refreshToken);
+    const refreshToken = req.cookies.refreshToken;
+    const { id } = { id: req.user.userId };
     console.log("id테스트", id);
 
     const { accessToken, newRefreshToken } = await userService.refreshToken(
@@ -100,7 +112,7 @@ export async function userNewToken(req, res, next) {
       path: "/token/refresh",
       httpOnly: true,
       sameSite: "none",
-      secure: true,
+      secure: false,
     });
 
     return res.json({ accessToken });

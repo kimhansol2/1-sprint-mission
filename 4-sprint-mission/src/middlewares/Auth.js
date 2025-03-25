@@ -2,6 +2,7 @@ import NotFoundError from "../lib/errors/NotFoundError.js";
 import articleRepository from "../repository/articleRepository.js";
 import productRepository from "../repository/productRepository.js";
 import userRepository from "../repository/userRepository.js";
+import { expressjwt } from "express-jwt";
 
 function throwUnauthorizedError() {
   const error = new Error("Unauthorized");
@@ -36,6 +37,19 @@ async function verifySessionLogin(req, res, next) {
     next(error);
   }
 }
+
+const verifyAccessToken = expressjwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+  requestProperty: "user",
+});
+
+const verifyRefreshToken = expressjwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+  requestProperty: "user",
+  getToken: (req) => req.cookies.refreshToken,
+});
 
 async function verifyProductAuth(req, res, next) {
   const id = parseInt(req.params.id);
@@ -82,4 +96,6 @@ export default {
   verifySessionLogin,
   verifyProductAuth,
   verifyArticleAuth,
+  verifyAccessToken,
+  verifyRefreshToken,
 };
