@@ -1,0 +1,29 @@
+###
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+  "name":"하얀색 티셔츠",
+  "description":"반팔 티셔츠",
+  "price":10000,
+  "tags":"TSHIRT"
+}
+
+###
+GET http://localhost:3000/products?offset=0&limit=10&name=검은색&description=댄디한
+
+###
+GET http://localhost:3000/products/2afa799b-
+
+###
+patch http://localhost:3000/products/0e5aa6e8-63da-4e2d-8036-ac58c5adb062
+Content-Type: application/json
+
+{
+  "name":"검은색 티서츠",
+  "description":"봄에 입기 좋은 티셔츠",
+  "price":30000
+}
+
+###
+delete http://localhost:3000/products/234bb1cc-2734-455f-92e3-631adfc23438
