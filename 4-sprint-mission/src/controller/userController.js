@@ -45,7 +45,6 @@ export async function loginUser(req, res, next) {
 
 export async function getUser(req, res, next) {
   try {
-    //안됨
     console.log(req.user);
     const user = create(req.user, userStruct);
     const result = await userService.getUserById(user.id);

@@ -17,14 +17,24 @@
     "path": "^0.12.7",
     "prisma": "^6.4.0",
     "superstruct": "^2.0.2",
+    "typescript": "^5.8.2",
     "uuid": "^11.1.0"
   },
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+    "dev": "nodemon --watch src/main.ts",
+    "start": "node dist/app.js",
+    "build": "tsc"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/passport": "^1.0.17",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/passport-local": "^1.0.38"
   }
 }
