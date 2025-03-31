@@ -11,8 +11,15 @@ import { IdParamsStruct } from "../structs/commonStruct.js";
 import { create } from "superstruct";
 import productService from "../services/productService.js";
 import likeServices from "../services/likeServices.js";
+import { Request, Response, NextFunction } from "express";
 
-export async function createProduct(req, res, next) {
+type Controller = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void | Response>;
+
+export const createProduct: Controller = async (req, res, next) => {
   try {
     const data = create(req.body, CreateProductBodyStruct);
     const user = req.user;
@@ -27,18 +34,18 @@ export async function createProduct(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function getProductList(req, res, next) {
+export const getProductList: Controller = async (req, res, next) => {
   try {
-    const { page, pagesize, orderBy, keyword } = create(
+    const { page, pageSize, orderBy, keyword } = create(
       req.query,
       GetProductListParamsStruct
     );
     const totalCount = await productService.count(keyword);
     const products = await productService.list(
       page,
-      pagesize,
+      pageSize,
       orderBy,
       keyword
     );
@@ -46,9 +53,9 @@ export async function getProductList(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function getProduct(req, res, next) {
+export const getProduct: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
     const product = await productService.getById(id);
@@ -57,9 +64,9 @@ export async function getProduct(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function updateProduct(req, res, next) {
+export const updateProduct: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
     const { name, description, price, tags, images } = create(
@@ -78,9 +85,9 @@ export async function updateProduct(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function deleteProduct(req, res, next) {
+export const deleteProduct: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
     await productService.getById(id);
@@ -89,9 +96,9 @@ export async function deleteProduct(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function createComment(req, res, next) {
+export const createComment(req, res, next) {
   try {
     const { id: productId } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, CreateCommentBodyStruct);

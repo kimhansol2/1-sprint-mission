@@ -4,8 +4,7 @@ import articleRepository from "../repository/articleRepository";
 import NotFoundError from "../lib/errors/NotFoundError";
 import commentsRepository from "../repository/commentsRepository";
 import userRepository from "../repository/userRepository";
-import { Response, NextFunction } from "express";
-import { User } from "@prisma/client";
+import { Request, Response, NextFunction } from "express";
 
 export async function verifyproductAuth(
   req: Request,
@@ -13,7 +12,7 @@ export async function verifyproductAuth(
   next: NextFunction
 ) {
   //const user = req.user as User;
-  console.log("req.user:", req.user?.id);
+  console.log("req.user:", req.user.id);
   const id = parseInt(req.params.id, 10);
   try {
     const product = await productRepository.getById(id);

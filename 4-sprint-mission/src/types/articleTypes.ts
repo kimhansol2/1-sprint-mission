@@ -12,5 +12,5 @@ export type ArticleCreateData = {
 export type ArticleUpdateDate = {
   title?: string;
   content?: string;
-  image?: string;
+  image?: string | null;
 };

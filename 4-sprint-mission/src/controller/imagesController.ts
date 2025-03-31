@@ -3,6 +3,7 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid"; // 고유한 파일명을 위한 uuod 생성
 import { PUBLIC_PATH, STATIC_PATH } from "../lib/constants.js"; // 파일 저장 경로
 import BadRequestError from "../lib/errors/BadRequestError.js"; // 예외 처리
+import { Request, Response } from "express";
 
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpg", "image/jpeg"]; //허용할 파일 형식
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 허용할 파일 크기
@@ -37,7 +38,7 @@ export const upload = multer({
   },
 });
 
-export async function uploadImage(req, res) {
+export async function uploadImage(req: Request, res: Response) {
   const host = req.get("host"); // 요청한 클라이언트의 도메인(호스트)를 가져옴
   const filePath = path.join(STATIC_PATH, req.file.filename); //업로드된 파일의 경로를 생성
   const url = `http://${host}${filePath}`; //파일 url을 반환 예시(http://localhost:3000/static/uploads/filename.jpg)

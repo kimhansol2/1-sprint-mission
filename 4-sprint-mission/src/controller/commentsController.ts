@@ -2,12 +2,18 @@ import { create } from "superstruct";
 import { UpdateCommentBodyStruct } from "../structs/commentsStruct.js";
 import { IdParamsStruct } from "../structs/commonStruct.js";
 import commentsService from "../services/commentsService.js";
+import { Request, Response, NextFunction } from "express";
 
-//.route("/:id").patch(asyncHandler(
-export async function updateComment(req, res, next) {
+type Controller = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void | Response>;
+
+export const updateComment: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
-    const { content } = create(req.body, UpdateCommentBodyStruct);
+    const { content = "" } = create(req.body, UpdateCommentBodyStruct);
 
     await commentsService.findById(id);
 
@@ -16,10 +22,9 @@ export async function updateComment(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-//.delete( asyncHandler(async
-export async function deleteComment(req, res, next) {
+export const deleteComment: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
 
@@ -31,4 +36,4 @@ export async function deleteComment(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};

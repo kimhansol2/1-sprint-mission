@@ -8,7 +8,7 @@ import {
   userProductList,
   userNewToken,
   likeProducts,
-} from "../controller/userController.js";
+} from "../controller/userController";
 import passport from "../middlewares/passport";
 import { verifyuserAuth } from "../middlewares/jwtAuth.js";
 
