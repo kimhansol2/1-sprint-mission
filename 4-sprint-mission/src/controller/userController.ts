@@ -8,28 +8,58 @@ import {
   cookieStruct,
 } from "../structs/userStructs.js";
 import { create } from "superstruct";
+import { Request, Response, NextFunction } from "express";
+import UnauthorizedError from "../lib/errors/Unauthorized.js";
 
-export async function createUser(req, res, next) {
+type Controller = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void>;
+
+export const createUser: Controller = async (req, res, next) => {
   try {
     const { email, nickname, password } = create(req.body, CreateUserStruct);
     await userService.findEmail(email);
     const data = await userService.create({ email, nickname, password });
     res.status(201).send({ data });
-  } catch (error) {
-    if (error.message === "이메일이 이미 존재합니다.") {
-      return res.status(400).send({ error: error.message });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.message === "이메일이 이미 존재합니다.") {
+        res.status(400).send({ error: error.message });
+        return;
+      }
     }
-
     return next(error);
+  }
+};
+
+function assertUserHasPassword(user: {
+  password?: string | undefined;
+}): asserts user is { password: string } {
+  if (!user.password) {
+    throw new UnauthorizedError("Unauthorized");
   }
 }
 
-export async function loginUser(req, res, next) {
+export const loginUser: Controller = async (req, res, next) => {
   try {
     const user = create(req.user, userStruct);
+
+    if (!user) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
+    assertUserHasPassword(user);
+
+    const transformedUser = {
+      ...user,
+      refreshToken: user.refreshToken ?? null,
+    };
+
     console.log(user);
-    const accessToken = userService.createToken(user);
-    const refreshToken = userService.createToken(user, "refresh");
+    const accessToken = userService.createToken(transformedUser);
+    const refreshToken = userService.createToken(transformedUser, "refresh");
 
     await userService.update(user.id, { refreshToken });
     res.cookie("refreshToken", refreshToken, {
@@ -37,13 +67,14 @@ export async function loginUser(req, res, next) {
       sameSite: "none",
       secure: true,
     });
-    return res.json({ accessToken });
+    res.json({ accessToken });
+    return;
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function getUser(req, res, next) {
+export const getUser: Controller = async (req, res, next) => {
   try {
     console.log(req.user);
     const user = create(req.user, userStruct);
@@ -52,19 +83,15 @@ export async function getUser(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function updateUser(req, res, next) {
+export const updateUser: Controller = async (req, res, next) => {
   try {
     const user = create(req.user, userStruct);
-    const { email, nickname, image, password } = create(
-      req.body,
-      updateUserStruct
-    );
+    const { email, nickname, password } = create(req.body, updateUserStruct);
     const result = await userService.update(user.id, {
       email,
       nickname,
-      image,
       password,
     });
 
@@ -72,25 +99,25 @@ export async function updateUser(req, res, next) {
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function userProductList(req, res, next) {
+export const userProductList: Controller = async (req, res, next) => {
   try {
     const user = create(req.user, userStruct);
     const { page, pagesize, orderBy } = create(req.query, getUserParamsStruct);
     const result = await userService.getProductList(user.id, {
       page,
       pagesize,
-      orderBy,
+      orderBy: "recent",
     });
 
     res.json(result);
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function userNewToken(req, res, next) {
+export const userNewToken: Controller = async (req, res, next) => {
   try {
     const { refreshToken } = create(req.cookies, cookieStruct);
     const { id } = create(req.user, userStruct);
@@ -109,19 +136,21 @@ export async function userNewToken(req, res, next) {
       secure: true,
     });
 
-    return res.json({ accessToken });
+    res.json({ accessToken });
+    return;
   } catch (error) {
     return next(error);
   }
-}
+};
 
-export async function likeProducts(req, res, next) {
+export const likeProducts: Controller = async (req, res, next) => {
   try {
     const user = create(req.user, userStruct);
     const { page, pagesize } = create(req.query, getUserParamsStruct);
     const result = await likeServices.productLikedList(user.id, page, pagesize);
-    return res.json(result);
+    res.json(result);
+    return;
   } catch (error) {
     return next(error);
   }
-}
+};

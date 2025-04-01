@@ -8,7 +8,7 @@ type Controller = (
   req: Request,
   res: Response,
   next: NextFunction
-) => Promise<void | Response>;
+) => Promise<void>;
 
 export const updateComment: Controller = async (req, res, next) => {
   try {
@@ -32,7 +32,8 @@ export const deleteComment: Controller = async (req, res, next) => {
 
     await commentsService.deleteId(id);
 
-    return res.status(204).send(); // 요청이 성공적으로 처리되면 no content를 보냄
+    res.status(204).send();
+    return; // 요청이 성공적으로 처리되면 no content를 보냄
   } catch (error) {
     return next(error);
   }

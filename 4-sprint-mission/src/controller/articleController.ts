@@ -13,13 +13,13 @@ import articleService from "../services/articleService";
 import likeServices from "../services/likeServices";
 import { Request, Response, NextFunction } from "express";
 import UnauthorizedError from "../lib/errors/Unauthorized";
-import { ArticleCreateData, ArticleUpdateDate } from "../types/articleTypes.js";
+import { ArticleUpdateDate } from "../types/articleTypes.js";
 
 type Controller = (
   req: Request,
   res: Response,
   next: NextFunction
-) => Promise<void | Response>;
+) => Promise<void>;
 
 export const createArticle: Controller = async (req, res, next) => {
   try {
@@ -29,28 +29,33 @@ export const createArticle: Controller = async (req, res, next) => {
     if (!req.user) {
       throw new UnauthorizedError("Unauthorized");
     }
-
-    const user = req.user as User;
     const articleData = {
       ...data,
-      userId: user.id,
+      userId: req.user.id,
     };
     console.log(articleData);
     const article = await articleService.create(articleData);
-    res.status(201).send(article);
+    void res.status(201).json(article);
+    return;
   } catch (error) {
     const err = error as Error;
     if (err.name === "StructError") {
-      return res.status(400).json({ error: "Invalid article data" });
+      void res.status(400).json({ error: "Invalid article data" });
+      return;
     }
-    return next(error);
+    next(error);
   }
 };
 
 export const getArticleList: Controller = async (req, res, next) => {
   try {
     const params = create(req.query, GetArticleListParamsStruct);
-    const userId = req.user.id;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
     const result = await articleService.getList(userId, params);
 
     res.send(result);
@@ -85,7 +90,8 @@ export const deleteArticle: Controller = async (req, res, next) => {
     const { id } = create(req.params, IdParamsStruct);
     await articleService.getById(id);
     await articleService.deleteById(id);
-    return res.status(204).send();
+    res.status(204).send();
+    return;
   } catch (error) {
     return next(error);
   }
@@ -96,11 +102,17 @@ export const createComment: Controller = async (req, res, next) => {
     const { id: articleId } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, CreateCommentBodyStruct);
     console.log(content);
-    const user = req.user.id;
+    const user = req.user?.id;
+
+    if (!user) {
+      throw new UnauthorizedError("Unauthorized");
+    }
+
     await articleService.getById(articleId);
     const comment = await articleService.saveComment(articleId, content, user);
 
-    return res.status(201).send(comment);
+    res.status(201).send(comment);
+    return;
   } catch (error) {
     return next(error);
   }
@@ -117,8 +129,8 @@ export const getCommentList: Controller = async (req, res, next) => {
       cursor,
       limit
     );
-
-    return res.send({ result });
+    res.send({ result });
+    return;
   } catch (error) {
     return next(error);
   }
@@ -126,7 +138,10 @@ export const getCommentList: Controller = async (req, res, next) => {
 
 export const articleLike: Controller = async (req, res, next) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new UnauthorizedError("Unauthorized");
+    }
     const articleId = parseInt(req.params.id);
     const result = await likeServices.likeArticleFind({ userId, articleId });
 

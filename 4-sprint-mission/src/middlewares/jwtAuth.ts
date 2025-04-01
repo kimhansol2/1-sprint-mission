@@ -11,17 +11,18 @@ export async function verifyproductAuth(
   res: Response,
   next: NextFunction
 ) {
-  //const user = req.user as User;
-  console.log("req.user:", req.user.id);
   const id = parseInt(req.params.id, 10);
   try {
+    if (!req.user) {
+      return next(new UnauthorizedError("Unauthorized"));
+    }
     const product = await productRepository.getById(id);
 
     if (!product) {
       throw new NotFoundError("NotFound");
     }
 
-    if (product.userId !== user.id) {
+    if (product.userId !== req.user.id) {
       throw new UnauthorizedError("Unauthorized");
     }
 
@@ -37,11 +38,11 @@ export async function verifyarticleAuth(
   next: NextFunction
 ) {
   const id = parseInt(req.params.id, 10);
-  if (!req.user) {
-    throw new NotFoundError("NotFound");
-  }
-  const userId = req.user.id;
+
   try {
+    if (!req.user) {
+      return next(new UnauthorizedError("Unauthorized"));
+    }
     const article = await articleRepository.findById(id);
     if (!article) {
       throw new NotFoundError("NotFound");
@@ -60,6 +61,9 @@ export async function verifycommentAuth(
   res: Response,
   next: NextFunction
 ) {
+  if (!req.user) {
+    return next(new UnauthorizedError("Unauthorized"));
+  }
   const id = parseInt(req.params.id, 10);
   try {
     const comment = await commentsRepository.findById(id);
@@ -84,11 +88,15 @@ export async function verifyuserAuth(
 ) {
   const id = parseInt(req.params.id, 10);
   try {
+    if (!req.user) {
+      return next(new UnauthorizedError("Unauthorized"));
+    }
     const user = await userRepository.findId(id);
     if (!user) {
       throw new NotFoundError("NotFound");
     }
-    if (user.id !== req.user.id) {
+
+    if (user.id !== req.user?.id) {
       throw new UnauthorizedError("Unauthorized");
     }
     return next();

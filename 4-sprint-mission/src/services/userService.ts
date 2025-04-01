@@ -77,12 +77,11 @@ async function getUserById(id: number) {
 
 async function update(
   id: number,
-  { email, nickname, image, password, refreshToken }: UserUpdateData
+  { email, nickname, password, refreshToken }: UserUpdateData
 ) {
   const updatedField: UserUpdateData = {};
   if (email !== undefined) updatedField.email = email;
   if (nickname !== undefined) updatedField.nickname = nickname;
-  if (image !== undefined) updatedField.image = image;
   if (password !== undefined)
     updatedField.password = await hashingPassword(password);
   if (refreshToken !== undefined) updatedField.refreshToken = refreshToken;
@@ -111,8 +110,8 @@ async function refreshToken(id: number, refreshToken: string) {
     throw new UnauthorizedError("Unauthorized");
   }
   const accessToken = createToken(user);
-  const newReFreshToken = createToken(user, "refresh");
-  return { accessToken, newReFreshToken };
+  const newRefreshToken = createToken(user, "refresh");
+  return { accessToken, newRefreshToken };
 }
 
 function filterSensitiveUserData(user: User) {

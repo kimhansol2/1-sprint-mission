@@ -8,8 +8,8 @@ export function defaultNotFoundHandler(
   req: Request,
   res: Response,
   next: NextFunction
-) {
-  return res.status(404).send({ message: "Not found" });
+): void {
+  res.status(404).send({ message: "Not found" });
 }
 
 export function globalErrorHandler(
@@ -17,33 +17,39 @@ export function globalErrorHandler(
   req: Request,
   res: Response,
   next: NextFunction
-) {
+): void {
   if (err instanceof StructError || err instanceof BadRequestError) {
-    return res.status(400).send({ message: err.message });
+    res.status(400).send({ message: err.message });
+    return;
   }
 
   if (
     err instanceof SyntaxError ||
     (isBadRequestError(err) && err.status === 400)
   ) {
-    return res.status(400).send({ message: "Invalid JSON" });
+    res.status(400).send({ message: "Invalid JSON" });
+    return;
   }
 
   if (hasCode(err)) {
     console.error(err);
-    return res.status(500).send({ message: "Failed to process data" });
+    res.status(500).send({ message: "Failed to process data" });
+    return;
   }
 
   if (err instanceof NotFoundError) {
-    return res.status(404).send({ message: err.message });
+    res.status(404).send({ message: err.message });
+    return;
   }
 
   if (err instanceof UnauthorizedError) {
-    return res.status(401).send({ message: err.message });
+    res.status(401).send({ message: err.message });
+    return;
   }
 
   console.error(err);
-  return res.status(500).send({ message: "Internal server error" });
+  res.status(500).send({ message: "Internal server error" });
+  return;
 }
 
 function isBadRequestError(err: unknown): err is BadRequestError {

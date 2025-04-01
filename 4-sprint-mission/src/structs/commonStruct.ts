@@ -21,7 +21,7 @@ export type IdParams = typeof IdParamsStruct.type;
 
 export const PageParamsStruct = object({
   page: defaulted(integerString, 1),
-  pageSize: defaulted(integerString, 10),
+  pagesize: defaulted(integerString, 10),
   orderBy: optional(enums(["recent"] as const)),
   keyword: optional(nonempty(string())),
 });

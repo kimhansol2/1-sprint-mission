@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const async_handler_js_1 = require("../lib/async-handler.js");
+const productController_js_1 = require("../controller/productController.js");
+const passport_1 = __importDefault(require("../middlewares/passport"));
+const jwtAuth_js_1 = require("../middlewares/jwtAuth.js");
+const productRouter = express_1.default.Router();
+productRouter.post("/", passport_1.default.authenticate("accessToken", { session: false }), (0, async_handler_js_1.asyncHandler)(productController_js_1.createProduct));
+productRouter.get("/", passport_1.default.authenticate("accessToken", { session: false }), (0, async_handler_js_1.asyncHandler)(productController_js_1.getProductList));
+productRouter.get("/:id", (0, async_handler_js_1.asyncHandler)(productController_js_1.getProduct));
+productRouter.patch("/:id", passport_1.default.authenticate("accessToken", { session: false }), jwtAuth_js_1.verifyproductAuth, (0, async_handler_js_1.asyncHandler)(productController_js_1.updateProduct));
+productRouter.delete("/:id", passport_1.default.authenticate("accessToken", { session: false }), jwtAuth_js_1.verifyproductAuth, (0, async_handler_js_1.asyncHandler)(productController_js_1.deleteProduct));
+productRouter.post("/:id/comments", passport_1.default.authenticate("accessToken", { session: false }), (0, async_handler_js_1.asyncHandler)(productController_js_1.createComment));
+productRouter.get("/:id/comments", (0, async_handler_js_1.asyncHandler)(productController_js_1.getCommentList));
+productRouter.post("/:id/likes", passport_1.default.authenticate("accessToken", { session: false }), (0, async_handler_js_1.asyncHandler)(productController_js_1.productLike));
+exports.default = productRouter;

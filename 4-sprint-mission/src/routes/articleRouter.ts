@@ -9,7 +9,7 @@ import {
   createComment,
   getCommentList,
   articleLike,
-} from "../controller/articleController.js";
+} from "../controller/articleController";
 import passport from "../middlewares/passport";
 import { verifyarticleAuth } from "../middlewares/jwtAuth.js";
 
