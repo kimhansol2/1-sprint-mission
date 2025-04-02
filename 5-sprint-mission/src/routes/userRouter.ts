@@ -8,8 +8,8 @@ import {
   userProductList,
   userNewToken,
   likeProducts,
-} from "../controller/userController";
-import passport from "../middlewares/passport";
+} from "../controller/userController.js";
+import passport from "../middlewares/passport.js";
 import { verifyuserAuth } from "../middlewares/jwtAuth.js";
 
 const userRouter = express.Router();

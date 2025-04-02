@@ -4,7 +4,7 @@ import {
   deleteComment,
 } from "../controller/commentsController.js";
 import { asyncHandler } from "../lib/async-handler.js";
-import passport from "../middlewares/passport";
+import passport from "../middlewares/passport.js";
 import { verifycommentAuth } from "../middlewares/jwtAuth.js";
 
 const commentRouter = express.Router();

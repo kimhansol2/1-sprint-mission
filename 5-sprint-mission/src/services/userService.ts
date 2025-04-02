@@ -1,7 +1,7 @@
 import NotFoundError from "../lib/errors/NotFoundError.js";
-import UnauthorizedError from "../lib/errors/Unauthorized";
-import productRepository from "../repository/productRepository";
-import userRepository from "../repository/userRepository";
+import UnauthorizedError from "../lib/errors/Unauthorized.js";
+import productRepository from "../repository/productRepository.js";
+import userRepository from "../repository/userRepository.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
@@ -9,7 +9,7 @@ import {
   UserCreateData,
   UserUpdateData,
   TransformedUser,
-} from "../dto/userDTO";
+} from "../dto/userDTO.js";
 
 interface getProductList {
   page: number;

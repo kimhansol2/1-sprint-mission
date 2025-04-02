@@ -10,7 +10,7 @@ import {
   getCommentList,
   productLike,
 } from "../controller/productController.js";
-import passport from "../middlewares/passport";
+import passport from "../middlewares/passport.js";
 import { verifyproductAuth } from "../middlewares/jwtAuth.js";
 
 const productRouter = express.Router();

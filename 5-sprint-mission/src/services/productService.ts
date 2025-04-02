@@ -1,8 +1,8 @@
 import productRepository from "../repository/productRepository.js";
 import NotFoundError from "../lib/errors/NotFoundError.js";
 import commentsRepository from "../repository/commentsRepository.js";
-import { ProductCreateData, ProductUpdateData } from "../dto/productDTO";
-import { ProductCommnetCreateData } from "../dto/commentDTO";
+import { ProductCreateData, ProductUpdateData } from "../dto/productDTO.js";
+import { ProductCommnetCreateData } from "../dto/commentDTO.js";
 interface GetListParams {
   page: number;
   pagesize: number;

@@ -1,6 +1,6 @@
 import prisma from "../lib/prisma.js";
 import { ProductLike, ArticleLike } from "@prisma/client";
-import { createArticleLike, createProductLike } from "../dto/likeDTO";
+import { createArticleLike, createProductLike } from "../dto/likeDTO.js";
 
 async function productLike(
   productData: createProductLike

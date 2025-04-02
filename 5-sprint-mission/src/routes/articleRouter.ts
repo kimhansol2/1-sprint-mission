@@ -9,8 +9,8 @@ import {
   createComment,
   getCommentList,
   articleLike,
-} from "../controller/articleController";
-import passport from "../middlewares/passport";
+} from "../controller/articleController.js";
+import passport from "../middlewares/passport.js";
 import { verifyarticleAuth } from "../middlewares/jwtAuth.js";
 
 const articlesRouter = express.Router();

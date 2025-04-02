@@ -4,7 +4,7 @@ import {
   ArticleCommnetCreateData,
   commnetupdatedata,
   ProductCommnetCreateData,
-} from "../dto/commentDTO";
+} from "../dto/commentDTO.js";
 type Cursor = number | undefined;
 
 async function findCommentsByArticle(
