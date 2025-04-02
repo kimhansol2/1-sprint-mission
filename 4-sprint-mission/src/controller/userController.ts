@@ -1,15 +1,21 @@
-import likeServices from "../services/likeServices.js";
-import userService from "../services/userService.js";
+import likeServices from "../services/likeServices";
+import userService from "../services/userService";
 import {
   CreateUserStruct,
   getUserParamsStruct,
   updateUserStruct,
   userStruct,
   cookieStruct,
-} from "../structs/userStructs.js";
+} from "../structs/userStructs";
 import { create } from "superstruct";
 import { Request, Response, NextFunction } from "express";
-import UnauthorizedError from "../lib/errors/Unauthorized.js";
+import UnauthorizedError from "../lib/errors/Unauthorized";
+import {
+  UserCreateData,
+  userResponseDTO,
+  TransformedUser,
+  UserUpdateData,
+} from "../dto/userDTO";
 
 type Controller = (
   req: Request,
@@ -21,8 +27,14 @@ export const createUser: Controller = async (req, res, next) => {
   try {
     const { email, nickname, password } = create(req.body, CreateUserStruct);
     await userService.findEmail(email);
-    const data = await userService.create({ email, nickname, password });
-    res.status(201).send({ data });
+    const userData: UserCreateData = {
+      email,
+      nickname,
+      password,
+    };
+
+    const user = await userService.create(userData);
+    res.status(201).send(userResponseDTO(user));
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (error.message === "이메일이 이미 존재합니다.") {
@@ -44,7 +56,7 @@ function assertUserHasPassword(user: {
 
 export const loginUser: Controller = async (req, res, next) => {
   try {
-    const user = create(req.user, userStruct);
+    const user = create(req.user as Express.User, userStruct);
 
     if (!user) {
       throw new UnauthorizedError("Unauthorized");
@@ -52,7 +64,7 @@ export const loginUser: Controller = async (req, res, next) => {
 
     assertUserHasPassword(user);
 
-    const transformedUser = {
+    const transformedUser: TransformedUser = {
       ...user,
       refreshToken: user.refreshToken ?? null,
     };
@@ -61,7 +73,11 @@ export const loginUser: Controller = async (req, res, next) => {
     const accessToken = userService.createToken(transformedUser);
     const refreshToken = userService.createToken(transformedUser, "refresh");
 
-    await userService.update(user.id, { refreshToken });
+    const userUpdate: UserUpdateData = {
+      id: user.id,
+      refreshToken,
+    };
+    await userService.update(userUpdate);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "none",
@@ -77,9 +93,9 @@ export const loginUser: Controller = async (req, res, next) => {
 export const getUser: Controller = async (req, res, next) => {
   try {
     console.log(req.user);
-    const user = create(req.user, userStruct);
-    const result = await userService.getUserById(user.id);
-    res.json(result);
+    const users = create(req.user, userStruct);
+    const user = await userService.getUserById(users.id);
+    res.json(userResponseDTO(user));
   } catch (error) {
     return next(error);
   }
@@ -87,15 +103,16 @@ export const getUser: Controller = async (req, res, next) => {
 
 export const updateUser: Controller = async (req, res, next) => {
   try {
-    const user = create(req.user, userStruct);
-    const { email, nickname, password } = create(req.body, updateUserStruct);
-    const result = await userService.update(user.id, {
-      email,
-      nickname,
-      password,
-    });
+    const users = create(req.user, userStruct);
+    const data = create(req.body, updateUserStruct);
 
-    res.json(result);
+    const updateData: UserUpdateData = {
+      id: users.id,
+      ...data,
+    };
+    const user = await userService.update(updateData);
+
+    res.json(userResponseDTO(user));
   } catch (error) {
     return next(error);
   }
@@ -104,11 +121,15 @@ export const updateUser: Controller = async (req, res, next) => {
 export const userProductList: Controller = async (req, res, next) => {
   try {
     const user = create(req.user, userStruct);
-    const { page, pagesize, orderBy } = create(req.query, getUserParamsStruct);
+    const {
+      page,
+      pagesize,
+      orderBy = "recent",
+    } = create(req.query, getUserParamsStruct);
     const result = await userService.getProductList(user.id, {
       page,
       pagesize,
-      orderBy: "recent",
+      orderBy,
     });
 
     res.json(result);
@@ -123,13 +144,16 @@ export const userNewToken: Controller = async (req, res, next) => {
     const { id } = create(req.user, userStruct);
     console.log("id테스트", id);
 
-    const { accessToken, newRefreshToken } = await userService.refreshToken(
-      id,
-      refreshToken
-    );
+    const token = await userService.refreshToken(id, refreshToken);
 
-    await userService.update(id, { refreshToken: newRefreshToken });
-    res.cookie("refreshToken", newRefreshToken, {
+    const TokenData = {
+      id,
+      refreshToken: token.newRefreshToken,
+    };
+    const accessToken = token.accessToken;
+
+    await userService.update(TokenData);
+    res.cookie("refreshToken", TokenData.refreshToken, {
       path: "/token/refresh",
       httpOnly: true,
       sameSite: "none",

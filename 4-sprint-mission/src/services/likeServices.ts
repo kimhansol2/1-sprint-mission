@@ -1,35 +1,25 @@
-import articleRepository from "../repository/articleRepository.js";
-import likeRepository from "../repository/likeRepository.js";
+import likeRepository from "../repository/likeRepository";
+import { createArticleLike, createProductLike } from "../dto/likeDTO";
 
-type ProductId = {
-  userId: number;
-  productId: number;
-};
-
-type ArticleId = {
-  userId: number;
-  articleId: number;
-};
-
-async function likeProductFind({ userId, productId }: ProductId) {
-  const existingLike = await likeRepository.productLike({ userId, productId });
+async function likeProductFind(productData: createProductLike) {
+  const existingLike = await likeRepository.productLike(productData);
   if (existingLike) {
-    await likeRepository.productLikeCancel({ userId, productId });
+    await likeRepository.productLikeCancel(productData);
     return { message: "좋아요가 취소되었습니다." };
   } else {
-    await likeRepository.prouductLikeCreate({ userId, productId }, true);
+    await likeRepository.prouductLikeCreate(productData, true);
     return { message: "좋아요가 추가되었습니다." };
   }
 }
 
-async function likeArticleFind({ userId, articleId }: ArticleId) {
-  const existingLike = await likeRepository.articleLike({ userId, articleId });
+async function likeArticleFind(likeId: createArticleLike) {
+  const existingLike = await likeRepository.articleLike(likeId);
 
   if (existingLike) {
-    await likeRepository.articleLikeCancel({ userId, articleId });
+    await likeRepository.articleLikeCancel(likeId);
     return { message: "좋아요가 취소되었습니다." };
   } else {
-    await likeRepository.articleLikeCreate({ userId, articleId }, true);
+    await likeRepository.articleLikeCreate(likeId, true);
     return { message: "좋아요가 추가되었습니다." };
   }
 }

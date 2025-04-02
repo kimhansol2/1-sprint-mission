@@ -1,19 +1,11 @@
 import prisma from "../lib/prisma.js";
 import { User, Prisma } from "@prisma/client";
+import { UserCreateData, UserUpdateData } from "../dto/userDTO.js";
 
-type UserCreateDet = Prisma.UserCreateInput;
-type UserUpdateDet = Prisma.UserUpdateInput;
-
-async function save({
-  email,
-  nickname,
-  password,
-}: UserCreateDet): Promise<User> {
+async function save(userUpdateData: UserCreateData): Promise<User> {
   return prisma.user.create({
     data: {
-      email,
-      nickname,
-      password,
+      ...userUpdateData,
     },
   });
 }
@@ -26,10 +18,11 @@ async function findId(id: number): Promise<User | null> {
   return prisma.user.findUnique({ where: { id } });
 }
 
-async function update(id: number, updatedField: UserUpdateDet): Promise<User> {
+async function update(updatedField: UserUpdateData): Promise<User> {
+  const { id, ...updatedata } = updatedField;
   return prisma.user.update({
     where: { id },
-    data: updatedField,
+    data: updatedata,
   });
 }
 

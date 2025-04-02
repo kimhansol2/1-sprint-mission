@@ -1,5 +1,6 @@
 import commentsRepository from "../repository/commentsRepository.js";
 import NotFoundError from "../lib/errors/NotFoundError.js";
+import { commnetupdatedata } from "../dto/commentDTO";
 
 async function findById(id: number) {
   const existingComment = await commentsRepository.findById(id);
@@ -9,8 +10,8 @@ async function findById(id: number) {
   return existingComment;
 }
 
-async function update(id: number, content: string) {
-  return commentsRepository.update(id, content);
+async function update(commentdata: commnetupdatedata) {
+  return commentsRepository.update(commentdata);
 }
 
 async function deleteId(id: number) {

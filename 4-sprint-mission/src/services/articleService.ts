@@ -1,7 +1,8 @@
 import articleRepository from "../repository/articleRepository";
 import NotFoundError from "../lib/errors/NotFoundError";
 import commentsRepository from "../repository/commentsRepository";
-import { ArticleCreateData, ArticleUpdateDate } from "../types/articleTypes";
+import { ArticleCreateData, ArticleUpdateData } from "../dto/articleDTO";
+import { ArticleCommnetCreateData } from "../dto/commentDTO";
 
 interface GetListParams {
   page: number;
@@ -50,16 +51,16 @@ async function getById(id: number) {
   return existingArticle;
 }
 
-async function update(id: number, data: ArticleUpdateDate) {
-  return articleRepository.update(id, data);
+async function update(updateData: ArticleUpdateData) {
+  return articleRepository.update(updateData);
 }
 
 async function deleteById(id: number) {
   return articleRepository.deleteById(id);
 }
 
-async function saveComment(articleId: number, content: string, user: number) {
-  return commentsRepository.commentArticle(articleId, content, user);
+async function saveComment(comment: ArticleCommnetCreateData) {
+  return commentsRepository.commentArticle(comment);
 }
 
 async function findCommentsByArticle(

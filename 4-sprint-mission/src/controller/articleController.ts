@@ -13,7 +13,16 @@ import articleService from "../services/articleService";
 import likeServices from "../services/likeServices";
 import { Request, Response, NextFunction } from "express";
 import UnauthorizedError from "../lib/errors/Unauthorized";
-import { ArticleUpdateDate } from "../types/articleTypes.js";
+import {
+  ArticleCreateData,
+  articleResponseDTO,
+  ArticleUpdateData,
+} from "../dto/articleDTO";
+import {
+  ArticleCommnetCreateData,
+  articlecommentResponseDTO,
+} from "../dto/commentDTO";
+import { createArticleLike } from "../dto/likeDTO";
 
 type Controller = (
   req: Request,
@@ -24,18 +33,17 @@ type Controller = (
 export const createArticle: Controller = async (req, res, next) => {
   try {
     const data = create(req.body, CreateArticleBodyStruct);
-    console.log(data);
 
     if (!req.user) {
       throw new UnauthorizedError("Unauthorized");
     }
-    const articleData = {
+    const articleData: ArticleCreateData = {
       ...data,
       userId: req.user.id,
     };
-    console.log(articleData);
+
     const article = await articleService.create(articleData);
-    void res.status(201).json(article);
+    res.status(201).json(articleResponseDTO(article));
     return;
   } catch (error) {
     const err = error as Error;
@@ -56,9 +64,9 @@ export const getArticleList: Controller = async (req, res, next) => {
       throw new UnauthorizedError("Unauthorized");
     }
 
-    const result = await articleService.getList(userId, params);
+    const article = await articleService.getList(userId, params);
 
-    res.send(result);
+    res.send(article);
   } catch (error) {
     return next(error);
   }
@@ -68,7 +76,7 @@ export const getArticle: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
     const article = await articleService.getById(id);
-    res.send(article);
+    res.send(articleResponseDTO(article));
   } catch (error) {
     return next(error);
   }
@@ -77,9 +85,15 @@ export const getArticle: Controller = async (req, res, next) => {
 export const updateArticle: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
-    const data: ArticleUpdateDate = create(req.body, UpdateArticleBodyStruct);
-    const article = await articleService.update(id, data);
-    res.send(article);
+    const data = create(req.body, UpdateArticleBodyStruct);
+
+    const updateData: ArticleUpdateData = {
+      ...data,
+      id,
+    };
+
+    const article = await articleService.update(updateData);
+    res.send(articleResponseDTO(article));
   } catch (error) {
     return next(error);
   }
@@ -102,16 +116,22 @@ export const createComment: Controller = async (req, res, next) => {
     const { id: articleId } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, CreateCommentBodyStruct);
     console.log(content);
-    const user = req.user?.id;
+    const userId = req.user?.id;
 
-    if (!user) {
+    if (!userId) {
       throw new UnauthorizedError("Unauthorized");
     }
 
     await articleService.getById(articleId);
-    const comment = await articleService.saveComment(articleId, content, user);
 
-    res.status(201).send(comment);
+    const commentData: ArticleCommnetCreateData = {
+      articleId,
+      content,
+      userId,
+    };
+    const comment = await articleService.saveComment(commentData);
+
+    res.status(201).send(articlecommentResponseDTO(comment));
     return;
   } catch (error) {
     return next(error);
@@ -143,9 +163,14 @@ export const articleLike: Controller = async (req, res, next) => {
       throw new UnauthorizedError("Unauthorized");
     }
     const articleId = parseInt(req.params.id);
-    const result = await likeServices.likeArticleFind({ userId, articleId });
 
-    res.status(200).json(result);
+    const likeId: createArticleLike = {
+      userId,
+      articleId,
+    };
+    const like = await likeServices.likeArticleFind(likeId);
+
+    res.status(200).json(like);
   } catch (error) {
     return next(error);
   }

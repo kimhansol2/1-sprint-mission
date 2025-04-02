@@ -1,8 +1,8 @@
 import prisma from "../lib/prisma";
 import { Prisma, Article } from "@prisma/client";
+import { ArticleUpdateData } from "../dto/articleDTO";
 
 type ArticleCreateDat = Prisma.ArticleCreateInput;
-type ArticleUpdateDat = Prisma.ArticleUpdateInput;
 type ArticleWithLike = Article & { ArticleLike: { isLiked: boolean }[] };
 async function save(data: ArticleCreateDat): Promise<Article> {
   return prisma.article.create({ data });
@@ -39,7 +39,8 @@ async function findArticle(
   });
 }
 
-async function update(id: number, data: ArticleUpdateDat): Promise<Article> {
+async function update(updateData: ArticleUpdateData): Promise<Article> {
+  const { id, ...data } = updateData;
   return await prisma.article.update({ where: { id }, data });
 }
 

@@ -1,14 +1,12 @@
 import prisma from "../lib/prisma.js";
-import { Product, Prisma, Article, ProductLike } from "@prisma/client";
-import { UpdateCommentBody } from "../structs/commentsStruct.js";
+import { Product, Prisma } from "@prisma/client";
+import { ProductCreateData, ProductUpdateData } from "../dto/productDTO.js";
 
-type ProductCreateDat = Prisma.ProductCreateInput;
-type ProductUpdateDat = Prisma.ProductUpdateInput;
 type ProductWithLike = Product & { ProductLike: { isLiked: boolean }[] };
 
-async function save(data: ProductCreateDat): Promise<Product> {
-  console.log("Saving product with data:", data);
-  return prisma.product.create({ data });
+async function save(productData: ProductCreateData): Promise<Product> {
+  console.log("Saving product with data:", productData);
+  return prisma.product.create({ data: productData });
 }
 
 async function list(
@@ -51,16 +49,12 @@ async function getById(id: number): Promise<Product | null> {
   });
 }
 
-async function update(
-  id: number,
-  { name, description, price, tags, images }: ProductUpdateDat
-): Promise<Product> {
+async function update(productData: ProductUpdateData): Promise<Product> {
+  const { id, tags, images, ...data } = productData;
   return prisma.product.update({
     where: { id },
     data: {
-      name,
-      description,
-      price,
+      ...data,
       tags: tags ? { set: tags as string[] } : undefined,
       images: images ? { set: images as string[] } : undefined,
     },

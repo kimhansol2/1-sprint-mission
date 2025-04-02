@@ -1,6 +1,10 @@
 import prisma from "../lib/prisma.js";
 import { Comment } from "@prisma/client";
-
+import {
+  ArticleCommnetCreateData,
+  commnetupdatedata,
+  ProductCommnetCreateData,
+} from "../dto/commentDTO";
 type Cursor = number | undefined;
 
 async function findCommentsByArticle(
@@ -33,7 +37,8 @@ async function findById(id: number): Promise<Comment | null> {
   return prisma.comment.findUnique({ where: { id } });
 }
 
-async function update(id: number, content: string): Promise<Comment> {
+async function update(commentData: commnetupdatedata): Promise<Comment> {
+  const { id, content } = commentData;
   return prisma.comment.update({
     where: { id },
     data: { content },
@@ -47,29 +52,25 @@ async function deleteId(id: number): Promise<Comment> {
 }
 
 async function commentArticle(
-  articleId: number,
-  content: string,
-  user: number
+  comment: ArticleCommnetCreateData
 ): Promise<Comment> {
+  const { content, articleId, userId } = comment;
   return await prisma.comment.create({
     data: {
       content,
       article: { connect: { id: articleId } },
-      user: { connect: { id: user } },
+      user: { connect: { id: userId } },
     },
   });
 }
 
-async function commentProduct(
-  productId: number,
-  content: string,
-  user: number
-) {
+async function commentProduct(productData: ProductCommnetCreateData) {
+  const { content, productId, userId } = productData;
   return await prisma.comment.create({
     data: {
       content,
       product: { connect: { id: productId } },
-      user: { connect: { id: user } },
+      user: { connect: { id: userId } },
     },
   });
 }

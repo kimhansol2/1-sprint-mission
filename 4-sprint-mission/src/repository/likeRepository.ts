@@ -1,93 +1,74 @@
 import prisma from "../lib/prisma.js";
 import { ProductLike, ArticleLike } from "@prisma/client";
+import { createArticleLike, createProductLike } from "../dto/likeDTO";
 
-type UserProductId = {
-  userId: number;
-  productId: number;
-};
-
-type UserArticleId = {
-  userId: number;
-  articleId: number;
-};
-
-async function productLike({
-  userId,
-  productId,
-}: UserProductId): Promise<ProductLike | null> {
+async function productLike(
+  productData: createProductLike
+): Promise<ProductLike | null> {
   return prisma.productLike.findUnique({
     where: {
       userId_productId: {
-        userId,
-        productId,
+        ...productData,
       },
     },
   });
 }
 
-async function productLikeCancel({
-  userId,
-  productId,
-}: UserProductId): Promise<ProductLike> {
+async function productLikeCancel(
+  productData: createProductLike
+): Promise<ProductLike> {
   return prisma.productLike.delete({
     where: {
       userId_productId: {
-        userId,
-        productId,
+        ...productData,
       },
     },
   });
 }
 
 async function prouductLikeCreate(
-  { userId, productId }: UserProductId,
+  productData: createProductLike,
   isLiked: boolean
 ): Promise<ProductLike> {
   return prisma.productLike.create({
     data: {
-      userId,
-      productId,
+      ...productData,
       isLiked: isLiked,
     },
   });
 }
 
-async function articleLike({
-  userId,
-  articleId,
-}: UserArticleId): Promise<ArticleLike | null> {
+async function articleLike(
+  likeId: createArticleLike
+): Promise<ArticleLike | null> {
   return prisma.articleLike.findUnique({
     where: {
       userId_articleId: {
-        userId,
-        articleId,
+        ...likeId,
       },
     },
   });
 }
 
-async function articleLikeCancel({
-  userId,
-  articleId,
-}: UserArticleId): Promise<ArticleLike> {
+async function articleLikeCancel(
+  likeId: createArticleLike
+): Promise<ArticleLike> {
   return prisma.articleLike.delete({
     where: {
       userId_articleId: {
-        userId,
-        articleId,
+        ...likeId,
       },
     },
   });
 }
 
 async function articleLikeCreate(
-  { userId, articleId }: UserArticleId,
+  likeId: createArticleLike,
   isLiked: boolean
 ): Promise<ArticleLike> {
   return prisma.articleLike.create({
     data: {
-      userId,
-      articleId,
+      ...likeId,
       isLiked: isLiked,
     },
   });

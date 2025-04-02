@@ -1,10 +1,15 @@
 import NotFoundError from "../lib/errors/NotFoundError.js";
-import UnauthorizedError from "../lib/errors/Unauthorized.js";
-import productRepository from "../repository/productRepository.js";
-import userRepository from "../repository/userRepository.js";
+import UnauthorizedError from "../lib/errors/Unauthorized";
+import productRepository from "../repository/productRepository";
+import userRepository from "../repository/userRepository";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User, UserCreateData, UserUpdateData } from "../types/userTypes.js";
+import {
+  User,
+  UserCreateData,
+  UserUpdateData,
+  TransformedUser,
+} from "../dto/userDTO";
 
 interface getProductList {
   page: number;
@@ -16,7 +21,7 @@ function hashingPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
 }
 
-function createToken(user: User, type?: "refresh"): string {
+function createToken(user: TransformedUser, type?: "refresh"): string {
   const payload = { userId: user.id };
   const options: jwt.SignOptions = {
     expiresIn: type === "refresh" ? "2w" : "1h",
@@ -39,13 +44,15 @@ async function findEmail(email: string) {
   }
 }
 
-async function create({ email, nickname, password }: UserCreateData) {
+async function create(userData: UserCreateData) {
+  const { password } = userData;
   const hashedPassword = await hashingPassword(password);
-  const user = await userRepository.save({
-    email,
-    nickname,
+
+  const userUpdateData: UserCreateData = {
+    ...userData,
     password: hashedPassword,
-  });
+  };
+  const user = await userRepository.save(userUpdateData);
   return filterSensitiveUserData(user);
 }
 
@@ -75,18 +82,17 @@ async function getUserById(id: number) {
   return filterSensitiveUserData(user);
 }
 
-async function update(
-  id: number,
-  { email, nickname, password, refreshToken }: UserUpdateData
-) {
-  const updatedField: UserUpdateData = {};
+async function update(userUpate: UserUpdateData) {
+  const { id, email, nickname, password, refreshToken } = userUpate;
+
+  const updatedField: UserUpdateData = { id };
   if (email !== undefined) updatedField.email = email;
   if (nickname !== undefined) updatedField.nickname = nickname;
   if (password !== undefined)
     updatedField.password = await hashingPassword(password);
   if (refreshToken !== undefined) updatedField.refreshToken = refreshToken;
 
-  const user = await userRepository.update(id, updatedField);
+  const user = await userRepository.update(updatedField);
 
   return filterSensitiveUserData(user);
 }

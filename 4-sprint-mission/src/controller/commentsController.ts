@@ -1,8 +1,9 @@
 import { create } from "superstruct";
-import { UpdateCommentBodyStruct } from "../structs/commentsStruct.js";
-import { IdParamsStruct } from "../structs/commonStruct.js";
-import commentsService from "../services/commentsService.js";
+import { UpdateCommentBodyStruct } from "../structs/commentsStruct";
+import { IdParamsStruct } from "../structs/commonStruct";
+import commentsService from "../services/commentsService";
 import { Request, Response, NextFunction } from "express";
+import { commnetupdatedata, commentResponseDTO } from "../dto/commentDTO";
 
 type Controller = (
   req: Request,
@@ -17,8 +18,13 @@ export const updateComment: Controller = async (req, res, next) => {
 
     await commentsService.findById(id);
 
-    const comment = await commentsService.update(id, content);
-    res.send(comment);
+    const commentdata: commnetupdatedata = {
+      id,
+      content,
+    };
+
+    const comment = await commentsService.update(commentdata);
+    res.send(commentResponseDTO(comment));
   } catch (error) {
     return next(error);
   }

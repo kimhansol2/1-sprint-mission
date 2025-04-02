@@ -2,17 +2,27 @@ import {
   CreateProductBodyStruct,
   GetProductListParamsStruct,
   UpdateProductBodyStruct,
-} from "../structs/productsStruct.js";
+} from "../structs/productsStruct";
 import {
   CreateCommentBodyStruct,
   getCommentListParamsStruct,
-} from "../structs/commentsStruct.js";
-import { IdParamsStruct } from "../structs/commonStruct.js";
+} from "../structs/commentsStruct";
+import { IdParamsStruct } from "../structs/commonStruct";
 import { create } from "superstruct";
-import productService from "../services/productService.js";
-import likeServices from "../services/likeServices.js";
+import productService from "../services/productService";
+import likeServices from "../services/likeServices";
 import { Request, Response, NextFunction } from "express";
-import UnauthorizedError from "../lib/errors/Unauthorized.js";
+import UnauthorizedError from "../lib/errors/Unauthorized";
+import {
+  ProductCreateData,
+  productResponseDTO,
+  ProductUpdateData,
+} from "../dto/productDTO";
+import {
+  ProductCommnetCreateData,
+  productcommentResponseDTO,
+} from "../dto/commentDTO";
+import { createProductLike } from "../dto/likeDTO";
 
 type Controller = (
   req: Request,
@@ -28,14 +38,14 @@ export const createProduct: Controller = async (req, res, next) => {
     if (!user) {
       throw new UnauthorizedError("Unauthorized");
     }
-    const productData = {
+    const productData: ProductCreateData = {
       ...data,
       userId: user.id,
     };
     console.log("Creating product with data:", productData);
     const product = await productService.create(productData);
 
-    res.status(201).json({ message: product });
+    res.status(201).json(productResponseDTO(product));
   } catch (error) {
     return next(error);
   }
@@ -73,7 +83,7 @@ export const getProduct: Controller = async (req, res, next) => {
     const { id } = create(req.params, IdParamsStruct);
     const product = await productService.getById(id);
 
-    res.send(product);
+    res.send(productResponseDTO(product));
     return;
   } catch (error) {
     return next(error);
@@ -83,19 +93,15 @@ export const getProduct: Controller = async (req, res, next) => {
 export const updateProduct: Controller = async (req, res, next) => {
   try {
     const { id } = create(req.params, IdParamsStruct);
-    const { name, description, price, tags, images } = create(
-      req.body,
-      UpdateProductBodyStruct
-    );
+    const data = create(req.body, UpdateProductBodyStruct);
     await productService.getById(id);
-    const product = await productService.update(id, {
-      name,
-      description,
-      price,
-      tags,
-      images,
-    });
-    res.send(product);
+
+    const productData: ProductUpdateData = {
+      id,
+      ...data,
+    };
+    const product = await productService.update(productData);
+    res.send(productResponseDTO(product));
     return;
   } catch (error) {
     return next(error);
@@ -117,20 +123,21 @@ export const createComment: Controller = async (req, res, next) => {
   try {
     const { id: productId } = create(req.params, IdParamsStruct);
     const { content } = create(req.body, CreateCommentBodyStruct);
-    const user = req.user?.id;
+    const userId = req.user?.id;
 
-    if (!user) {
+    if (!userId) {
       throw new UnauthorizedError("Unauthorized");
     }
+    const productComment: ProductCommnetCreateData = {
+      productId,
+      content,
+      userId,
+    };
 
     await productService.getById(productId);
 
-    const comment = await productService.commentProduct(
-      productId,
-      content,
-      user
-    );
-    res.status(201).send(comment);
+    const comment = await productService.commentProduct(productComment);
+    res.status(201).send(productcommentResponseDTO(comment));
     return;
   } catch (error) {
     return next(error);
@@ -164,8 +171,14 @@ export const productLike: Controller = async (req, res, next) => {
     if (!userId) {
       throw new UnauthorizedError("Unauthorized");
     }
-    const result = await likeServices.likeProductFind({ userId, productId });
-    res.status(200).json(result);
+
+    const productData: createProductLike = {
+      userId,
+      productId,
+    };
+
+    const like = await likeServices.likeProductFind(productData);
+    res.status(200).json(like);
   } catch (error) {
     return next(error);
   }

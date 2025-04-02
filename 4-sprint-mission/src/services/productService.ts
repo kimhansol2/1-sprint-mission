@@ -1,8 +1,8 @@
 import productRepository from "../repository/productRepository.js";
 import NotFoundError from "../lib/errors/NotFoundError.js";
 import commentsRepository from "../repository/commentsRepository.js";
-import { ProductCreateData, ProductUpdateData } from "../types/productTypes.js";
-
+import { ProductCreateData, ProductUpdateData } from "../dto/productDTO";
+import { ProductCommnetCreateData } from "../dto/commentDTO";
 interface GetListParams {
   page: number;
   pagesize: number;
@@ -10,8 +10,8 @@ interface GetListParams {
   keyword?: string;
 }
 
-async function create(data: ProductCreateData) {
-  const user = await productRepository.save(data);
+async function create(productData: ProductCreateData) {
+  const user = await productRepository.save(productData);
   if (user) {
     console.error("이미 있음");
   }
@@ -55,29 +55,16 @@ async function getById(id: number) {
   return existingProduct;
 }
 
-async function update(
-  id: number,
-  { name, description, price, tags, images }: ProductUpdateData
-) {
-  return productRepository.update(id, {
-    name,
-    description,
-    price,
-    tags,
-    images,
-  });
+async function update(productData: ProductUpdateData) {
+  return productRepository.update(productData);
 }
 
 async function deleteId(id: number) {
   return productRepository.deleteId(id);
 }
 
-async function commentProduct(
-  productId: number,
-  content: string,
-  user: number
-) {
-  return commentsRepository.commentProduct(productId, content, user);
+async function commentProduct(productComment: ProductCommnetCreateData) {
+  return commentsRepository.commentProduct(productComment);
 }
 
 async function findCommentsByProduct(
