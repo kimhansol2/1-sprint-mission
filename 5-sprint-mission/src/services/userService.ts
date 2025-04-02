@@ -1,34 +1,29 @@
-import NotFoundError from "../lib/errors/NotFoundError.js";
-import UnauthorizedError from "../lib/errors/Unauthorized.js";
-import productRepository from "../repository/productRepository.js";
-import userRepository from "../repository/userRepository.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import {
-  User,
-  UserCreateData,
-  UserUpdateData,
-  TransformedUser,
-} from "../dto/userDTO.js";
+import NotFoundError from '../lib/errors/NotFoundError.js';
+import UnauthorizedError from '../lib/errors/Unauthorized.js';
+import productRepository from '../repository/productRepository.js';
+import userRepository from '../repository/userRepository.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { User, UserCreateData, UserUpdateData, TransformedUser } from '../dto/userDTO.js';
 
 interface getProductList {
   page: number;
   pagesize: number;
-  orderBy: "recent" | "id";
+  orderBy: 'recent' | 'id';
 }
 
 function hashingPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
 }
 
-function createToken(user: TransformedUser, type?: "refresh"): string {
+function createToken(user: TransformedUser, type?: 'refresh'): string {
   const payload = { userId: user.id };
   const options: jwt.SignOptions = {
-    expiresIn: type === "refresh" ? "2w" : "1h",
+    expiresIn: type === 'refresh' ? '2w' : '1h',
   };
 
   if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined ");
+    throw new Error('JWT_SECRET is not defined ');
   }
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, options);
@@ -38,10 +33,14 @@ function createToken(user: TransformedUser, type?: "refresh"): string {
 
 async function findEmail(email: string) {
   const existingUser = await userRepository.findEmail(email);
-  console.log(existingUser);
   if (existingUser) {
-    throw new Error("이메일이 이미 존재합니다.");
+    throw new Error('이메일이 이미 존재합니다.');
   }
+}
+
+async function findEmailForLogin(email: string) {
+  const existingUser = await userRepository.findEmail(email);
+  return existingUser;
 }
 
 async function create(userData: UserCreateData) {
@@ -59,7 +58,7 @@ async function create(userData: UserCreateData) {
 async function getUser(email: string, password: string) {
   const user = await userRepository.findEmail(email);
   if (!user) {
-    throw new UnauthorizedError("Unauthorized");
+    throw new UnauthorizedError('Unauthorized');
   }
 
   await verifyPassword(password, user.password);
@@ -67,17 +66,17 @@ async function getUser(email: string, password: string) {
   return user;
 }
 
-async function verifyPassword(inputPassword: string, savedPassword: string) {
+export async function verifyPassword(inputPassword: string, savedPassword: string) {
   const isValid = await bcrypt.compare(inputPassword, savedPassword);
   if (!isValid) {
-    throw new UnauthorizedError("Unauthorized");
+    throw new UnauthorizedError('Unauthorized');
   }
 }
 
 async function getUserById(id: number) {
   const user = await userRepository.findId(id);
   if (!user) {
-    throw new NotFoundError("NotFound");
+    throw new NotFoundError('NotFound');
   }
   return filterSensitiveUserData(user);
 }
@@ -88,8 +87,7 @@ async function update(userUpate: UserUpdateData) {
   const updatedField: UserUpdateData = { id };
   if (email !== undefined) updatedField.email = email;
   if (nickname !== undefined) updatedField.nickname = nickname;
-  if (password !== undefined)
-    updatedField.password = await hashingPassword(password);
+  if (password !== undefined) updatedField.password = await hashingPassword(password);
   if (refreshToken !== undefined) updatedField.refreshToken = refreshToken;
 
   const user = await userRepository.update(updatedField);
@@ -97,10 +95,7 @@ async function update(userUpate: UserUpdateData) {
   return filterSensitiveUserData(user);
 }
 
-async function getProductList(
-  id: number,
-  { page, pagesize, orderBy = "recent" }: getProductList
-) {
+async function getProductList(id: number, { page, pagesize, orderBy = 'recent' }: getProductList) {
   page = page > 0 ? page : 1;
   pagesize = pagesize > 0 ? pagesize : 10;
   return productRepository.userProduct(id, {
@@ -113,10 +108,10 @@ async function getProductList(
 async function refreshToken(id: number, refreshToken: string) {
   const user = await userRepository.findId(id);
   if (!user || user.refreshToken !== refreshToken) {
-    throw new UnauthorizedError("Unauthorized");
+    throw new UnauthorizedError('Unauthorized');
   }
   const accessToken = createToken(user);
-  const newRefreshToken = createToken(user, "refresh");
+  const newRefreshToken = createToken(user, 'refresh');
   return { accessToken, newRefreshToken };
 }
 
@@ -134,4 +129,6 @@ export default {
   update,
   getProductList,
   refreshToken,
+  verifyPassword,
+  findEmailForLogin,
 };

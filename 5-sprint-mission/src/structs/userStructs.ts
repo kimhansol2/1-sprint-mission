@@ -1,18 +1,14 @@
-import {
-  object,
-  string,
-  nonempty,
-  date,
-  integer,
-  nullable,
-  optional,
-  partial,
-} from "superstruct";
-import { PageParamsStruct } from "./commonStruct";
+import { object, string, nonempty, date, integer, nullable, optional, partial } from 'superstruct';
+import { PageParamsStruct } from './commonStruct';
 
 export const CreateUserStruct = object({
   email: nonempty(string()),
   nickname: nonempty(string()),
+  password: nonempty(string()),
+});
+
+export const loginUserStruct = object({
+  email: nonempty(string()),
   password: nonempty(string()),
 });
 

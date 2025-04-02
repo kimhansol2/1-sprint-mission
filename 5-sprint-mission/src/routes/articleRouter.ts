@@ -1,5 +1,5 @@
-import express from "express";
-import { asyncHandler } from "../lib/async-handler.js";
+import express from 'express';
+import { asyncHandler } from '../lib/async-handler.js';
 import {
   createArticle,
   getArticleList,
@@ -9,45 +9,18 @@ import {
   createComment,
   getCommentList,
   articleLike,
-} from "../controller/articleController.js";
-import passport from "../middlewares/passport.js";
-import { verifyarticleAuth } from "../middlewares/jwtAuth.js";
+} from '../controller/articleController.js';
+import { authenticate } from '../middlewares/authenticate';
 
 const articlesRouter = express.Router();
 
-articlesRouter.post(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createArticle)
-);
-articlesRouter.get(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(getArticleList)
-);
-articlesRouter.get("/:id", asyncHandler(getArticle));
-articlesRouter.patch(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyarticleAuth,
-  asyncHandler(updateArticle)
-);
-articlesRouter.delete(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyarticleAuth,
-  asyncHandler(deleteArticle)
-);
-articlesRouter.post(
-  "/:id/comments",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createComment)
-);
-articlesRouter.get("/:id/comments", asyncHandler(getCommentList));
-articlesRouter.post(
-  "/:id/likes",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(articleLike)
-);
+articlesRouter.post('/', authenticate(), asyncHandler(createArticle));
+articlesRouter.get('/', authenticate({ optional: true }), asyncHandler(getArticleList));
+articlesRouter.get('/:id', authenticate({ optional: true }), asyncHandler(getArticle));
+articlesRouter.patch('/:id', authenticate(), asyncHandler(updateArticle));
+articlesRouter.delete('/:id', authenticate(), asyncHandler(deleteArticle));
+articlesRouter.post('/:id/comments', authenticate(), asyncHandler(createComment));
+articlesRouter.get('/:id/comments', asyncHandler(getCommentList));
+articlesRouter.post('/:id/likes', authenticate(), asyncHandler(articleLike));
 
 export default articlesRouter;

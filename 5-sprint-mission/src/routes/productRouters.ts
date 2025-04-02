@@ -1,5 +1,5 @@
-import express from "express";
-import { asyncHandler } from "../lib/async-handler.js";
+import express from 'express';
+import { asyncHandler } from '../lib/async-handler';
 import {
   createProduct,
   getProduct,
@@ -9,45 +9,18 @@ import {
   createComment,
   getCommentList,
   productLike,
-} from "../controller/productController.js";
-import passport from "../middlewares/passport.js";
-import { verifyproductAuth } from "../middlewares/jwtAuth.js";
+} from '../controller/productController';
+import { authenticate } from '../middlewares/authenticate';
 
 const productRouter = express.Router();
 
-productRouter.post(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createProduct)
-);
-productRouter.get(
-  "/",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(getProductList)
-);
-productRouter.get("/:id", asyncHandler(getProduct));
-productRouter.patch(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyproductAuth,
-  asyncHandler(updateProduct)
-);
-productRouter.delete(
-  "/:id",
-  passport.authenticate("accessToken", { session: false }),
-  verifyproductAuth,
-  asyncHandler(deleteProduct)
-);
-productRouter.post(
-  "/:id/comments",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(createComment)
-);
-productRouter.get("/:id/comments", asyncHandler(getCommentList));
-productRouter.post(
-  "/:id/likes",
-  passport.authenticate("accessToken", { session: false }),
-  asyncHandler(productLike)
-);
+productRouter.post('/', authenticate(), asyncHandler(createProduct));
+productRouter.get('/', authenticate({ optional: true }), asyncHandler(getProductList));
+productRouter.get('/:id', authenticate({ optional: true }), asyncHandler(getProduct));
+productRouter.patch('/:id', authenticate(), asyncHandler(updateProduct));
+productRouter.delete('/:id', authenticate(), asyncHandler(deleteProduct));
+productRouter.post('/:id/comments', authenticate(), asyncHandler(createComment));
+productRouter.get('/:id/comments', asyncHandler(getCommentList));
+productRouter.post('/:id/likes', authenticate(), asyncHandler(productLike));
 
 export default productRouter;

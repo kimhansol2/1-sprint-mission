@@ -1,8 +1,8 @@
-import { User as PrismaUser } from "@prisma/client";
+import { User as PrismaUser } from '@prisma/client';
 
 export type User = PrismaUser;
 
-export function userResponseDTO(user: Omit<User, "password" | "refreshToken">) {
+export function userResponseDTO(user: Omit<User, 'password' | 'refreshToken'>) {
   return {
     id: user.id,
     email: user.email,
@@ -50,4 +50,9 @@ export function userTransform(user: PrismaUser): TransformedUser {
     password: user.password,
     refreshToken: user.refreshToken ?? null,
   };
+}
+
+export interface userToken {
+  id: number;
+  refreshToken: string;
 }

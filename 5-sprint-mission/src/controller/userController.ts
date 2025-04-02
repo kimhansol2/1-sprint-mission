@@ -1,27 +1,23 @@
-import likeServices from "../services/likeServices";
-import userService from "../services/userService";
+import likeServices from '../services/likeServices';
+import userService from '../services/userService';
 import {
   CreateUserStruct,
   getUserParamsStruct,
   updateUserStruct,
   userStruct,
   cookieStruct,
-} from "../structs/userStructs";
-import { create } from "superstruct";
-import { Request, Response, NextFunction } from "express";
-import UnauthorizedError from "../lib/errors/Unauthorized";
-import {
-  UserCreateData,
-  userResponseDTO,
-  TransformedUser,
-  UserUpdateData,
-} from "../dto/userDTO";
+  loginUserStruct,
+} from '../structs/userStructs';
+import { create } from 'superstruct';
+import { Request, Response, NextFunction } from 'express';
+import UnauthorizedError from '../lib/errors/Unauthorized';
+import { UserCreateData, userResponseDTO, userToken, UserUpdateData } from '../dto/userDTO';
+import bcrypt from 'bcrypt';
+import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants';
+import BadRequestError from '../lib/errors/BadRequestError';
+import { verifyRefreshToken } from '../lib/token';
 
-type Controller = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<void>;
+type Controller = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
 export const createUser: Controller = async (req, res, next) => {
   try {
@@ -37,7 +33,7 @@ export const createUser: Controller = async (req, res, next) => {
     res.status(201).send(userResponseDTO(user));
   } catch (error: unknown) {
     if (error instanceof Error) {
-      if (error.message === "이메일이 이미 존재합니다.") {
+      if (error.message === '이메일이 이미 존재합니다.') {
         res.status(400).send({ error: error.message });
         return;
       }
@@ -46,44 +42,42 @@ export const createUser: Controller = async (req, res, next) => {
   }
 };
 
-function assertUserHasPassword(user: {
-  password?: string | undefined;
-}): asserts user is { password: string } {
-  if (!user.password) {
-    throw new UnauthorizedError("Unauthorized");
-  }
-}
-
 export const loginUser: Controller = async (req, res, next) => {
   try {
-    const user = create(req.user as Express.User, userStruct);
+    const { email, password } = create(req.body, loginUserStruct);
+
+    const user = await userService.findEmailForLogin(email);
 
     if (!user) {
-      throw new UnauthorizedError("Unauthorized");
+      throw new UnauthorizedError('Unauthorized');
     }
+    const isPasswordValid = userService.verifyPassword(password, user.password);
 
-    assertUserHasPassword(user);
-
-    const transformedUser: TransformedUser = {
-      ...user,
-      refreshToken: user.refreshToken ?? null,
-    };
-
-    console.log(user);
-    const accessToken = userService.createToken(transformedUser);
-    const refreshToken = userService.createToken(transformedUser, "refresh");
+    if (!isPasswordValid) {
+      throw new UnauthorizedError('Invalid credentials');
+    }
+    const accessToken = userService.createToken(user);
+    const refreshToken = userService.createToken(user, 'refresh');
 
     const userUpdate: UserUpdateData = {
       id: user.id,
       refreshToken,
     };
     await userService.update(userUpdate);
-    res.cookie("refreshToken", refreshToken, {
+
+    res.cookie('accessTokne', accessToken, {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
-    res.json({ accessToken });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    res.send('로그인 성공');
     return;
   } catch (error) {
     return next(error);
@@ -92,7 +86,6 @@ export const loginUser: Controller = async (req, res, next) => {
 
 export const getUser: Controller = async (req, res, next) => {
   try {
-    console.log(req.user);
     const users = create(req.user, userStruct);
     const user = await userService.getUserById(users.id);
     res.json(userResponseDTO(user));
@@ -121,11 +114,7 @@ export const updateUser: Controller = async (req, res, next) => {
 export const userProductList: Controller = async (req, res, next) => {
   try {
     const user = create(req.user, userStruct);
-    const {
-      page,
-      pagesize,
-      orderBy = "recent",
-    } = create(req.query, getUserParamsStruct);
+    const { page, pagesize, orderBy = 'recent' } = create(req.query, getUserParamsStruct);
     const result = await userService.getProductList(user.id, {
       page,
       pagesize,
@@ -140,27 +129,43 @@ export const userProductList: Controller = async (req, res, next) => {
 
 export const userNewToken: Controller = async (req, res, next) => {
   try {
-    const { refreshToken } = create(req.cookies, cookieStruct);
-    const { id } = create(req.user, userStruct);
-    console.log("id테스트", id);
+    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+    if (!refreshToken) {
+      throw new BadRequestError('Invalid refresh token');
+    }
 
-    const token = await userService.refreshToken(id, refreshToken);
+    const { userId } = verifyRefreshToken(refreshToken);
 
-    const TokenData = {
-      id,
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      throw new BadRequestError('Invalid refresh token');
+    }
+
+    const token = await userService.refreshToken(user.id, refreshToken);
+
+    const TokenData: userToken = {
+      id: user.id,
       refreshToken: token.newRefreshToken,
     };
     const accessToken = token.accessToken;
 
     await userService.update(TokenData);
-    res.cookie("refreshToken", TokenData.refreshToken, {
-      path: "/token/refresh",
+
+    res.cookie('accesstoken', accessToken, {
+      path: '/token/refresh',
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
 
-    res.json({ accessToken });
+    res.cookie('refreshToken', TokenData.refreshToken, {
+      path: '/token/refresh',
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    res.send('재발급 완료');
     return;
   } catch (error) {
     return next(error);
