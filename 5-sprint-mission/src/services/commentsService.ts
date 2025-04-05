@@ -1,25 +1,19 @@
-import commentsRepository from "../repository/commentsRepository.js";
-import NotFoundError from "../lib/errors/NotFoundError.js";
-import { commnetupdatedata } from "../dto/commentDTO.js";
+import { updatedata, findById, deleteId } from '../repository/commentsRepository.js';
+import NotFoundError from '../lib/errors/NotFoundError.js';
+import { commnetupdatedata } from '../dto/commentDTO.js';
 
-async function findById(id: number) {
-  const existingComment = await commentsRepository.findById(id);
+export async function findByIdData(id: number) {
+  const existingComment = await findById(id);
   if (!existingComment) {
-    throw new NotFoundError("Not Found");
+    throw new NotFoundError('Not Found');
   }
   return existingComment;
 }
 
-async function update(commentdata: commnetupdatedata) {
-  return commentsRepository.update(commentdata);
+export async function update(commentdata: commnetupdatedata) {
+  return updatedata(commentdata);
 }
 
-async function deleteId(id: number) {
-  return commentsRepository.deleteId(id);
+export async function deleteIdData(id: number) {
+  return deleteId(id);
 }
-
-export default {
-  findById,
-  update,
-  deleteId,
-};

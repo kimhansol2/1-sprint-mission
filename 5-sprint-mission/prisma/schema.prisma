@@ -17,7 +17,7 @@ model Product {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   ProductComment Comment[]
-  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   ProductLike    ProductLike[]
 }
@@ -30,7 +30,7 @@ model Article {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   ArticleComment Comment[]
-  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int
   ArticleLike    ArticleLike[]
 }
@@ -44,7 +44,7 @@ model Comment {
   productId Int?
   article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
 
@@ -70,7 +70,7 @@ model ProductLike {
   user      User     @relation(fields: [userId], references: [id])
   product   Product  @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now())
-  isLiked   Boolean  @default(false)
+  updatedAt DateTime @default(now())
 
   @@id([userId, productId])
 }
@@ -80,8 +80,8 @@ model ArticleLike {
   articleId Int
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   article   Article  @relation(fields: [articleId], references: [id])
-  isLiked   Boolean  @default(false)
 
   @@id([userId, articleId])
 }

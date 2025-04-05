@@ -1,55 +1,60 @@
-import prisma from "../lib/prisma.js";
-import { Product, Prisma } from "@prisma/client";
-import { ProductCreateData, ProductUpdateData } from "../dto/productDTO.js";
+import prisma from '../lib/prisma.js';
+import { Product } from '@prisma/client';
+import { ProductCreateData, ProductUpdateData } from '../dto/productDTO.js';
+import { ListQueryParams } from '../types/queryParams';
 
-type ProductWithLike = Product & { ProductLike: { isLiked: boolean }[] };
+type ProductWithLike = Product & { ProductLike: { userId: number }[] };
 
-async function save(productData: ProductCreateData): Promise<Product> {
-  console.log("Saving product with data:", productData);
+export async function savedata(productData: ProductCreateData): Promise<Product> {
   return prisma.product.create({ data: productData });
 }
 
-async function list(
-  userId: number,
-  page: number,
-  pagesize: number,
-  orderBy: "recent" | "id",
-  keyword?: string
-): Promise<ProductWithLike[]> {
+export async function listdata(params: ListQueryParams): Promise<ProductWithLike[]> {
+  const { userId, page, pagesize, orderBy, keyword, likedOnly } = params;
+
   return prisma.product.findMany({
     skip: (page - 1) * pagesize,
     take: pagesize,
-    orderBy: orderBy === "recent" ? { id: "desc" } : { id: "asc" },
-    where: keyword
-      ? {
-          OR: [
-            { name: { contains: keyword } },
-            { description: { contains: keyword } },
-          ],
-        }
-      : undefined,
+    orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
+    where: {
+      ...(keyword && {
+        OR: [{ name: { contains: keyword } }, { description: { contains: keyword } }],
+      }),
+      ...(likedOnly && userId && { ProductLike: { some: { userId } } }),
+    },
     include: {
-      ProductLike: {
-        where: { userId: userId },
-        select: { isLiked: true },
-      },
+      ProductLike: userId
+        ? {
+            where: { userId: userId },
+            select: { userId: true },
+          }
+        : false,
     },
   });
 }
 
-async function count(keyword?: string): Promise<number> {
+export async function countdata(
+  keyword?: string,
+  likedOnly: boolean = false,
+  userId?: number,
+): Promise<number> {
   return prisma.product.count({
-    where: keyword ? { name: { contains: keyword } } : undefined,
+    where: {
+      ...(keyword && {
+        OR: [{ name: { contains: keyword } }, { description: { contains: keyword } }],
+      }),
+      ...(likedOnly && userId && { ProductLike: { some: { userId } } }),
+    },
   });
 }
 
-async function getById(id: number): Promise<Product | null> {
+export async function getByIdData(id: number): Promise<Product | null> {
   return prisma.product.findUnique({
     where: { id },
   });
 }
 
-async function update(productData: ProductUpdateData): Promise<Product> {
+export async function updateData(productData: ProductUpdateData): Promise<Product> {
   const { id, tags, images, ...data } = productData;
   return prisma.product.update({
     where: { id },
@@ -61,34 +66,20 @@ async function update(productData: ProductUpdateData): Promise<Product> {
   });
 }
 
-async function deleteId(id: number): Promise<Product> {
+export async function deleteIdData(id: number): Promise<Product> {
   return prisma.product.delete({
     where: { id },
   });
 }
 
-async function userProduct(
+export async function userProduct(
   id: number,
-  {
-    page,
-    pagesize,
-    orderBy,
-  }: { page: number; pagesize: number; orderBy: "recent" | "id" }
+  { page, pagesize, orderBy }: { page: number; pagesize: number; orderBy: 'recent' | 'id' },
 ) {
   return prisma.product.findMany({
     where: { userId: id },
     skip: (page - 1) * pagesize,
     take: pagesize,
-    orderBy: orderBy === "recent" ? { id: "desc" } : { id: "asc" },
+    orderBy: orderBy === 'recent' ? { id: 'desc' } : { id: 'asc' },
   });
 }
-
-export default {
-  save,
-  list,
-  count,
-  getById,
-  update,
-  deleteId,
-  userProduct,
-};

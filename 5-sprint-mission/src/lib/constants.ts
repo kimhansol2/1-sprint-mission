@@ -10,8 +10,8 @@ if (!process.env.JWT_REFRESH_TOKEN_SECRET) {
   throw new Error('JWT_REFRESH_TOKEN_SECRET  환경 변수가 설정되지 않았습니다.');
 }
 
-export const ACCESS_TOKEN_COOKIE_NAME: string = 'access-token';
-export const REFRESH_TOKEN_COOKIE_NAME: string = 'refresh-token';
+export const ACCESS_TOKEN_COOKIE_NAME: string = 'accessToken';
+export const REFRESH_TOKEN_COOKIE_NAME: string = 'refreshToken';
 export const DATABASE_URL: string | undefined = process.env.DATABASE_URL;
 export const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 export const JWT_REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;

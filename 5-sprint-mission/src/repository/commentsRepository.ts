@@ -1,43 +1,43 @@
-import prisma from "../lib/prisma.js";
-import { Comment } from "@prisma/client";
+import prisma from '../lib/prisma.js';
+import { Comment } from '@prisma/client';
 import {
   ArticleCommnetCreateData,
   commnetupdatedata,
   ProductCommnetCreateData,
-} from "../dto/commentDTO.js";
+} from '../dto/commentDTO.js';
 type Cursor = number | undefined;
 
-async function findCommentsByArticle(
+export async function findCommentsByArticles(
   articleId: number,
   cursor: Cursor,
-  limit: number
+  limit: number,
 ): Promise<Comment[]> {
   return prisma.comment.findMany({
     cursor: cursor ? { id: cursor } : undefined,
     take: limit,
     where: { articleId },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
-async function findCommentsByProduct(
+export async function findCommentsByProductData(
   productId: number,
   cursor: Cursor,
-  limit: number
+  limit: number,
 ): Promise<Comment[]> {
   return prisma.comment.findMany({
     cursor: cursor ? { id: cursor } : undefined,
     take: limit,
     where: { productId },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
-async function findById(id: number): Promise<Comment | null> {
+export async function findById(id: number): Promise<Comment | null> {
   return prisma.comment.findUnique({ where: { id } });
 }
 
-async function update(commentData: commnetupdatedata): Promise<Comment> {
+export async function updatedata(commentData: commnetupdatedata): Promise<Comment> {
   const { id, content } = commentData;
   return prisma.comment.update({
     where: { id },
@@ -45,15 +45,13 @@ async function update(commentData: commnetupdatedata): Promise<Comment> {
   });
 }
 
-async function deleteId(id: number): Promise<Comment> {
+export async function deleteId(id: number): Promise<Comment> {
   return prisma.comment.delete({
     where: { id },
   });
 }
 
-async function commentArticle(
-  comment: ArticleCommnetCreateData
-): Promise<Comment> {
+export async function commentArticle(comment: ArticleCommnetCreateData): Promise<Comment> {
   const { content, articleId, userId } = comment;
   return await prisma.comment.create({
     data: {
@@ -64,7 +62,7 @@ async function commentArticle(
   });
 }
 
-async function commentProduct(productData: ProductCommnetCreateData) {
+export async function commentProductData(productData: ProductCommnetCreateData) {
   const { content, productId, userId } = productData;
   return await prisma.comment.create({
     data: {
@@ -74,13 +72,3 @@ async function commentProduct(productData: ProductCommnetCreateData) {
     },
   });
 }
-
-export default {
-  findCommentsByArticle,
-  findById,
-  update,
-  deleteId,
-  findCommentsByProduct,
-  commentArticle,
-  commentProduct,
-};

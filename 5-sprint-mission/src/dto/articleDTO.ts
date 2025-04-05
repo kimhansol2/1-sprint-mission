@@ -1,4 +1,4 @@
-import { Article as PrismaArticle } from "@prisma/client";
+import { Article as PrismaArticle } from '@prisma/client';
 
 export interface Article extends PrismaArticle {}
 
@@ -22,8 +22,9 @@ export interface ArticleCreateData {
 }
 
 export interface ArticleUpdateData {
-  id: number;
+  userId?: number;
   title?: string;
   content?: string;
   image?: string | null;
+  id?: number;
 }

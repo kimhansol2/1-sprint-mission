@@ -1,78 +1,70 @@
-import articleRepository from "../repository/articleRepository";
-import NotFoundError from "../lib/errors/NotFoundError";
-import commentsRepository from "../repository/commentsRepository";
-import { ArticleCreateData, ArticleUpdateData } from "../dto/articleDTO";
-import { ArticleCommnetCreateData } from "../dto/commentDTO";
+import {
+  savedata,
+  countArticle,
+  findArticle,
+  findById,
+  updatedata,
+  deleteByIdData,
+} from '../repository/articleRepository';
+import NotFoundError from '../lib/errors/NotFoundError';
+import { commentArticle, findCommentsByArticles } from '../repository/commentsRepository';
+import { ArticleCreateData, ArticleUpdateData } from '../dto/articleDTO';
+import { ArticleCommnetCreateData } from '../dto/commentDTO';
 
 interface GetListParams {
   page: number;
   pagesize: number;
-  orderBy?: "recent" | "id";
+  orderBy?: 'recent' | 'id';
   keyword?: string;
 }
 
-async function create(article: ArticleCreateData) {
-  return await articleRepository.save(article);
+export async function save(article: ArticleCreateData) {
+  return await savedata(article);
 }
 
-async function getList(
+export async function getList(
   userId: number,
-  { page, pagesize, orderBy = "recent", keyword }: GetListParams
+  { page, pagesize, orderBy = 'recent', keyword }: GetListParams,
 ) {
-  const totalCount = await articleRepository.countArticle(keyword);
+  const totalCount = await countArticle(keyword);
 
   page = page > 0 ? page : 1;
   pagesize = pagesize > 0 ? pagesize : 10;
 
-  const articles = await articleRepository.findArticle(
-    userId,
-    page,
-    pagesize,
-    orderBy,
-    keyword
-  );
+  const articles = await findArticle(userId, page, pagesize, orderBy, keyword);
   return {
     list: articles.map((article) => ({
       ...article,
-      isLiked:
-        article.ArticleLike.length > 0 ? article.ArticleLike[0].isLiked : false,
+      isLiked: userId ? article.ArticleLike.length > 0 : false,
       ArticleLike: undefined,
     })),
     totalCount,
   };
 }
 
-async function getById(id: number) {
-  const existingArticle = await articleRepository.findById(id);
+export async function getById(id: number) {
+  const existingArticle = await findById(id);
 
   if (!existingArticle) {
-    throw new NotFoundError("NotFound");
+    throw new NotFoundError('NotFound');
   }
   return existingArticle;
 }
 
-async function update(updateData: ArticleUpdateData) {
-  return articleRepository.update(updateData);
+export async function update(updateData: ArticleUpdateData) {
+  return updatedata(updateData);
 }
 
-async function deleteById(id: number) {
-  return articleRepository.deleteById(id);
+export async function deleteById(id: number) {
+  return deleteByIdData(id);
 }
 
-async function saveComment(comment: ArticleCommnetCreateData) {
-  return commentsRepository.commentArticle(comment);
+export async function saveComment(comment: ArticleCommnetCreateData) {
+  return commentArticle(comment);
 }
 
-async function findCommentsByArticle(
-  articleId: number,
-  cursor: number,
-  limit: number
-) {
-  const commentsWithCursor = await commentsRepository.findCommentsByArticle(
-    articleId,
-    cursor,
-    limit + 1
-  );
+export async function findCommentsByArticle(articleId: number, cursor: number, limit: number) {
+  const commentsWithCursor = await findCommentsByArticles(articleId, cursor, limit + 1);
 
   const comments = commentsWithCursor.slice(0, limit);
   const cursorComment = commentsWithCursor[commentsWithCursor.length - 1];
@@ -83,13 +75,3 @@ async function findCommentsByArticle(
     nextCursor,
   };
 }
-
-export default {
-  create,
-  getList,
-  getById,
-  update,
-  deleteById,
-  saveComment,
-  findCommentsByArticle,
-};

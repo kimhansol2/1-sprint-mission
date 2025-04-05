@@ -3,3 +3,4 @@ node_modules
 ERD.MD
 study.MD
 tests
+dist/

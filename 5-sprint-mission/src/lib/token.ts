@@ -10,12 +10,11 @@ export function generateTokens(userId: number) {
 
 export function verifyAccessToken(token: string) {
   const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
-
   if (typeof decoded === 'string' || decoded === null) {
     throw new Error('Invalid token payload');
   }
 
-  return { userId: decoded.id };
+  return { userId: decoded.userId };
 }
 
 export function verifyRefreshToken(token: string) {
@@ -25,5 +24,5 @@ export function verifyRefreshToken(token: string) {
     throw new Error('Invalid token payload');
   }
 
-  return { userId: decoded.id };
+  return { userId: decoded.userId };
 }

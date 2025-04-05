@@ -6,6 +6,7 @@ import userRepository from '../repository/userRepository';
 export function authenticate(options = { optional: false }) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const accessToken = req.cookies[ACCESS_TOKEN_COOKIE_NAME];
+
     if (!accessToken) {
       if (options.optional) {
         next();
