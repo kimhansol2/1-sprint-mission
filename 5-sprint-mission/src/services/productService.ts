@@ -1,0 +1,85 @@
+import {
+  updateData,
+  countdata,
+  savedata,
+  listdata,
+  getByIdData,
+  deleteIdData,
+} from '../repository/productRepository.js';
+import NotFoundError from '../lib/errors/NotFoundError.js';
+import { findCommentsByProductData, commentProductData } from '../repository/commentsRepository.js';
+import { ProductCreateData, ProductUpdateData } from '../dto/productDTO.js';
+import { ProductCommnetCreateData } from '../dto/commentDTO.js';
+import { ListQueryParams } from '../types/queryParams';
+
+export async function save(productData: ProductCreateData) {
+  const user = await savedata(productData);
+  if (user) {
+    console.error('already signup');
+  }
+  return user;
+}
+
+export async function list(userId: number | null, params: ListQueryParams) {
+  const adjustedParams = {
+    ...params,
+    userId: userId ?? undefined,
+    page: params.page > 0 ? params.page : 1,
+    pagesize: params.pagesize > 0 ? params.pagesize : 10,
+  };
+
+  const totalCount = await countdata(
+    adjustedParams.keyword,
+    adjustedParams.likedOnly,
+    adjustedParams.userId,
+  );
+
+  const products = await listdata(adjustedParams);
+  return {
+    list: products.map((product) => {
+      return {
+        ...product,
+        isLiked: userId ? product.ProductLike.length > 0 : false,
+        ProductLike: undefined,
+      };
+    }),
+    totalCount,
+  };
+}
+
+export async function count(keyword: string) {
+  return countdata(keyword);
+}
+
+export async function getById(id: number) {
+  const existingProduct = await getByIdData(id);
+  if (!existingProduct) {
+    throw new NotFoundError('NotFound');
+  }
+  return existingProduct;
+}
+
+export async function update(productData: ProductUpdateData) {
+  return updateData(productData);
+}
+
+export async function deleteId(id: number) {
+  return deleteIdData(id);
+}
+
+export async function commentProduct(productComment: ProductCommnetCreateData) {
+  return commentProductData(productComment);
+}
+
+export async function findCommentsByProduct(productId: number, cursor: number, limit: number) {
+  const commentsWithCursor = await findCommentsByProductData(productId, cursor, limit + 1);
+
+  const comments = commentsWithCursor.slice(0, limit);
+  const cursorComment = commentsWithCursor[commentsWithCursor.length - 1];
+  const nextCursor = cursorComment ? cursorComment.id : null;
+
+  return {
+    list: comments,
+    nextCursor,
+  };
+}

@@ -1,0 +1,26 @@
+###
+POST http://localhost:3000/articles
+Content-Type: application/json
+
+{
+  "title":"중고 티셔츠 팝니다",
+  "content":"팔아요 중고티"
+}
+
+###
+GET http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
+
+###
+PATCH http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
+Content-Type: application/json
+
+{
+  "title":"중고 티셔츠 급처 흥정",
+  "content": "중고 티셔츠 싸게 팔아요"
+}
+
+###
+DELETE http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
+
+###
+GET http://localhost:3000/articles?offset=0&limit=10&title=중고+티셔츠

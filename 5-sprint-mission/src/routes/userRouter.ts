@@ -1,0 +1,24 @@
+import express from 'express';
+import { asyncHandler } from '../lib/async-handler.js';
+import {
+  createUser,
+  getUser,
+  loginUser,
+  updateUser,
+  userProductList,
+  userNewToken,
+  likeProducts,
+} from '../controller/userController.js';
+import { authenticate } from '../middlewares/authenticate';
+
+const userRouter = express.Router();
+
+userRouter.post('/', asyncHandler(createUser));
+userRouter.post('/login', asyncHandler(loginUser));
+userRouter.get('/:id', authenticate({ optional: true }), asyncHandler(getUser));
+userRouter.patch('/:id', authenticate(), asyncHandler(updateUser));
+userRouter.get('/:id/products', authenticate(), asyncHandler(userProductList));
+userRouter.post('/token/refresh', asyncHandler(userNewToken));
+userRouter.get('/:id/productLikes', authenticate(), asyncHandler(likeProducts));
+
+export default userRouter;
