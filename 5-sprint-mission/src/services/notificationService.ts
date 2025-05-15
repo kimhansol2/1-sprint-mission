@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { createNotificationType } from '../types/notificationType';
-import { create } from '../repository/notificationRepository';
+import { create, findNotifications } from '../repository/notificationRepository';
 import { porductLikedFindPerson } from '../repository/likeRepository';
 
 let io: Server;
@@ -37,4 +37,8 @@ export const notifyPriceChanged = async (productId: number, newPrice: number) =>
       }),
     ),
   );
+};
+
+export const findNotification = async (userId: number, onlyUnread: boolean) => {
+  return findNotifications(userId, onlyUnread);
 };

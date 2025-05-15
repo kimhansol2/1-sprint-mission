@@ -1,4 +1,15 @@
-import { object, string, nonempty, date, integer, nullable, optional, partial } from 'superstruct';
+import {
+  object,
+  string,
+  nonempty,
+  date,
+  integer,
+  nullable,
+  optional,
+  partial,
+  boolean,
+  coerce,
+} from 'superstruct';
 import { PageParamsStruct } from './commonStruct';
 
 export const CreateUserStruct = object({
@@ -41,3 +52,13 @@ export type GetUserParams = typeof getUserParamsStruct.type;
 export const updateUserStruct = partial(CreateUserStruct);
 
 export type UpdateUser = typeof updateUserStruct.type;
+
+const BooleanQuery = coerce(boolean(), string(), (val) => {
+  if (val === 'true') return true;
+  if (val === 'false') return false;
+  return undefined;
+});
+
+export const notificationStruct = object({
+  read: optional(BooleanQuery),
+});
