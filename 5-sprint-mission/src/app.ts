@@ -7,6 +7,7 @@ import articleRouter from './routes/articleRouter';
 import commentRouter from './routes/commentRouter';
 import imagesRouter from './routes/imagesRouter';
 import userRouter from './routes/userRouter';
+import notificationRouter from './routes/notificationRouter';
 import { defaultNotFoundHandler, globalErrorHandler } from './controller/errorController';
 import cookieParser from 'cookie-parser';
 
@@ -21,6 +22,7 @@ app.use('/articles', articleRouter);
 app.use('/comments', commentRouter);
 app.use('/images', imagesRouter);
 app.use('/users', userRouter);
+app.use('/notifications', notificationRouter);
 
 app.use(defaultNotFoundHandler);
 app.use(globalErrorHandler);

@@ -49,19 +49,20 @@ model Comment {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  nickname     String
-  image        String?
-  password     String
-  refreshToken String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
-  Product      Product[]
-  Article      Article[]
-  Comment      Comment[]
-  ProductLike  ProductLike[]
-  ArticleLike  ArticleLike[]
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  nickname      String
+  image         String?
+  password      String
+  refreshToken  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  Product       Product[]
+  Article       Article[]
+  Comment       Comment[]
+  ProductLike   ProductLike[]
+  ArticleLike   ArticleLike[]
+  Notificastion Notification[]
 }
 
 model ProductLike {
@@ -84,4 +85,20 @@ model ArticleLike {
   article   Article  @relation(fields: [articleId], references: [id])
 
   @@id([userId, articleId])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  user      User             @relation(fields: [userId], references: [id])
+  userId    Int
+  type      NotificationType
+  payload   Json
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+enum NotificationType {
+  PRICE_UPDATED
+  COMMENT_CREATED
 }
