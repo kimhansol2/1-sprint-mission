@@ -1,6 +1,6 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../lib/prisma';
 import { User, Prisma } from '@prisma/client';
-import { UserCreateData, UserUpdateData } from '../dto/userDTO.js';
+import { UserCreateData, UserUpdateData } from '../dto/userDTO';
 
 export async function savedata(userUpdateData: UserCreateData): Promise<User> {
   return prisma.user.create({

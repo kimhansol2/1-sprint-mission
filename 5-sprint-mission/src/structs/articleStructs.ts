@@ -1,5 +1,5 @@
-import { string, object, nonempty, partial, nullable } from "superstruct";
-import { PageParamsStruct } from "./commonStruct.js";
+import { string, object, nonempty, partial, nullable } from 'superstruct';
+import { PageParamsStruct } from './commonStruct';
 
 export const GetArticleListParamsStruct = PageParamsStruct;
 

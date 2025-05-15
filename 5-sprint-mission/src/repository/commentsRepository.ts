@@ -1,10 +1,10 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../lib/prisma';
 import { Comment } from '@prisma/client';
 import {
   ArticleCommnetCreateData,
   commnetupdatedata,
   ProductCommnetCreateData,
-} from '../dto/commentDTO.js';
+} from '../dto/commentDTO';
 type Cursor = number | undefined;
 
 export async function findCommentsByArticles(

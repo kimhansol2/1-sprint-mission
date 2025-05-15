@@ -1,5 +1,5 @@
 import express from 'express';
-import { asyncHandler } from '../lib/async-handler.js';
+import { asyncHandler } from '../lib/async-handler';
 import {
   createUser,
   getUser,
@@ -8,7 +8,7 @@ import {
   userProductList,
   userNewToken,
   likeProducts,
-} from '../controller/userController.js';
+} from '../controller/userController';
 import { authenticate } from '../middlewares/authenticate';
 
 const userRouter = express.Router();

@@ -1,6 +1,6 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../lib/prisma';
 import { ProductLike, ArticleLike } from '@prisma/client';
-import { createArticleLike, createProductLike } from '../dto/likeDTO.js';
+import { createArticleLike, createProductLike } from '../dto/likeDTO';
 
 export async function productLike(productData: createProductLike): Promise<ProductLike | null> {
   return prisma.productLike.findUnique({

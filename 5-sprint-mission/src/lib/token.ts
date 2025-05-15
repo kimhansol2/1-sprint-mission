@@ -14,7 +14,7 @@ export function verifyAccessToken(token: string) {
     throw new Error('Invalid token payload');
   }
 
-  return { userId: decoded.userId };
+  return { userId: decoded.id };
 }
 
 export function verifyRefreshToken(token: string) {
@@ -24,5 +24,5 @@ export function verifyRefreshToken(token: string) {
     throw new Error('Invalid token payload');
   }
 
-  return { userId: decoded.userId };
+  return { userId: decoded.id };
 }

@@ -5,11 +5,11 @@ import {
   listdata,
   getByIdData,
   deleteIdData,
-} from '../repository/productRepository.js';
-import NotFoundError from '../lib/errors/NotFoundError.js';
-import { findCommentsByProductData, commentProductData } from '../repository/commentsRepository.js';
-import { ProductCreateData, ProductUpdateData } from '../dto/productDTO.js';
-import { ProductCommnetCreateData } from '../dto/commentDTO.js';
+} from '../repository/productRepository';
+import NotFoundError from '../lib/errors/NotFoundError';
+import { findCommentsByProductData, commentProductData } from '../repository/commentsRepository';
+import { ProductCreateData, ProductUpdateData } from '../dto/productDTO';
+import { ProductCommnetCreateData } from '../dto/commentDTO';
 import { ListQueryParams } from '../types/queryParams';
 
 export async function save(productData: ProductCreateData) {

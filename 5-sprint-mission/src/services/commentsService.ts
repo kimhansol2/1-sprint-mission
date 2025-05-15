@@ -1,6 +1,6 @@
-import { updatedata, findById, deleteId } from '../repository/commentsRepository.js';
-import NotFoundError from '../lib/errors/NotFoundError.js';
-import { commnetupdatedata } from '../dto/commentDTO.js';
+import { updatedata, findById, deleteId } from '../repository/commentsRepository';
+import NotFoundError from '../lib/errors/NotFoundError';
+import { commnetupdatedata } from '../dto/commentDTO';
 
 export async function findByIdData(id: number) {
   const existingComment = await findById(id);

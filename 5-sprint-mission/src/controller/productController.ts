@@ -126,11 +126,12 @@ export const getCommentList: Controller = async (req, res) => {
 
 export const productLike: Controller = async (req, res) => {
   const productId = parseInt(req.params.id);
-  const userId = req.user?.id;
 
-  if (!userId) {
+  if (!req.user) {
     throw new UnauthorizedError('Unauthorized');
   }
+
+  const userId = req.user.id;
 
   const productData: createProductLike = {
     userId,
