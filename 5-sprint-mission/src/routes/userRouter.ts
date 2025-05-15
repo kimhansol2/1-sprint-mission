@@ -20,5 +20,6 @@ userRouter.patch('/:id', authenticate(), asyncHandler(updateUser));
 userRouter.get('/:id/products', authenticate(), asyncHandler(userProductList));
 userRouter.post('/token/refresh', asyncHandler(userNewToken));
 userRouter.get('/:id/productLikes', authenticate(), asyncHandler(likeProducts));
+userRouter.get('');
 
 export default userRouter;

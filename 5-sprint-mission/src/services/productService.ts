@@ -11,6 +11,7 @@ import { findCommentsByProductData, commentProductData } from '../repository/com
 import { ProductCreateData, ProductUpdateData } from '../dto/productDTO';
 import { ProductCommnetCreateData } from '../dto/commentDTO';
 import { ListQueryParams } from '../types/queryParams';
+import { notifyPriceChanged } from './notificationService';
 
 export async function save(productData: ProductCreateData) {
   const user = await savedata(productData);
@@ -60,7 +61,17 @@ export async function getById(id: number) {
 }
 
 export async function update(productData: ProductUpdateData) {
-  return updateData(productData);
+  const existing = await getByIdData(productData.id);
+  const updated = await updateData(productData);
+
+  if (
+    existing?.price !== undefined &&
+    productData.price !== undefined &&
+    existing.price !== productData.price
+  ) {
+    await notifyPriceChanged(updated.id, updated.price);
+  }
+  return updated;
 }
 
 export async function deleteId(id: number) {

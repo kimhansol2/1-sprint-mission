@@ -74,7 +74,6 @@ export async function saveComment(comment: ArticleCommnetCreateData) {
         payload: {
           articleId: newComment.articleId,
           commentId: newComment.id,
-          message: '작성하신 게시글에 댓글이 달렸습니다.',
         },
       });
     }

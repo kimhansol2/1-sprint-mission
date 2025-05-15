@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import { createNotificationType } from '../types/notificationType';
 import { create } from '../repository/notificationRepository';
+import { porductLikedFindPerson } from '../repository/likeRepository';
 
 let io: Server;
 
@@ -19,4 +20,21 @@ export const createNotification = async ({ userId, type, payload }: createNotifi
   console.log('📤 알림 전송됨: user_', userId);
 
   return notification;
+};
+
+export const notifyPriceChanged = async (productId: number, newPrice: number) => {
+  const likes = await porductLikedFindPerson(productId, newPrice);
+
+  await Promise.all(
+    likes.map(({ userId }) =>
+      createNotification({
+        userId,
+        type: 'PRICE_UPDATED',
+        payload: {
+          productId,
+          newPrice,
+        },
+      }),
+    ),
+  );
 };
