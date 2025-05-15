@@ -5,11 +5,13 @@ import {
   findById,
   updatedata,
   deleteByIdData,
+  findArticleAuthorId,
 } from '../repository/articleRepository';
 import NotFoundError from '../lib/errors/NotFoundError';
 import { commentArticle, findCommentsByArticles } from '../repository/commentsRepository';
 import { ArticleCreateData, ArticleUpdateData } from '../dto/articleDTO';
 import { ArticleCommnetCreateData } from '../dto/commentDTO';
+import { createNotification } from './notificationService';
 
 interface GetListParams {
   page: number;
@@ -60,7 +62,25 @@ export async function deleteById(id: number) {
 }
 
 export async function saveComment(comment: ArticleCommnetCreateData) {
-  return commentArticle(comment);
+  const newComment = await commentArticle(comment);
+
+  if (newComment.articleId) {
+    const articleAuthorId = await findArticleAuthorId(newComment.articleId);
+
+    if (articleAuthorId && articleAuthorId !== newComment.userId) {
+      await createNotification({
+        userId: articleAuthorId,
+        type: 'COMMENT_CREATED',
+        payload: {
+          articleId: newComment.articleId,
+          commentId: newComment.id,
+          message: '작성하신 게시글에 댓글이 달렸습니다.',
+        },
+      });
+    }
+  }
+
+  return newComment;
 }
 
 export async function findCommentsByArticle(articleId: number, cursor: number, limit: number) {

@@ -54,3 +54,12 @@ export async function updatedata(updateData: ArticleUpdateData): Promise<Article
 export async function deleteByIdData(id: number): Promise<Article> {
   return await prisma.article.delete({ where: { id } });
 }
+
+export async function findArticleAuthorId(id: number): Promise<number | null> {
+  const article = await prisma.article.findUnique({
+    where: { id },
+    select: { userId: true },
+  });
+
+  return article?.userId ?? null;
+}

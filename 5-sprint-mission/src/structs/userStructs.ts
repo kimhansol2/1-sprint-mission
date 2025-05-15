@@ -5,6 +5,7 @@ export const CreateUserStruct = object({
   email: nonempty(string()),
   nickname: nonempty(string()),
   password: nonempty(string()),
+  image: optional(string()),
 });
 
 export const loginUserStruct = object({

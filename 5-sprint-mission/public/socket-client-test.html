@@ -26,10 +26,14 @@
           },
         });
         socket.on('connect', () => {
-          console.log('connected');
+          console.log('✅ [Client] 소켓 연결됨');
         });
         socket.on('notification', (data) => {
-          console.log('notification', data);
+          console.log('📩 [Client] 알림 수신:', data);
+        });
+
+        socket.on('connect_error', (err) => {
+          console.error('❌ [Client] 소켓 연결 실패:', err.message);
         });
       });
     </script>

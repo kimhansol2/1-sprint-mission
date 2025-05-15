@@ -1,13 +1,13 @@
 import 'express';
 import { User as PrismaUser } from '@prisma/client';
 
-/**declare module 'socket.io' {
+declare module 'socket.io' {
   interface Socket {
     user?: {
       id: number;
     };
   }
-}**/
+}
 
 declare global {
   namespace Express {
