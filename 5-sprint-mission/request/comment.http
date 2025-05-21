@@ -1,7 +1,7 @@
 ###
 POST http://localhost:3000/articles/1/comments
 Content-Type: application/json
-Cookie:  accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NzI5NDA4OCwiZXhwIjoxNzQ3Mjk3Njg4fQ.DGK-x1o-JSnAqj9s4OWnHGpyRQ_QF13My1DGUYNLyhg
+Cookie:  accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NzM3MTEwMCwiZXhwIjoxNzQ3Mzc0NzAwfQ.EWovPmxioTMBF6rY1sO5Sz1YuWMprCp0cTW1Mv4TfNc
 
 {
   "content":"저요11"

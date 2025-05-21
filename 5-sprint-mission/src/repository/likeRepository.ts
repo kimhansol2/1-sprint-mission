@@ -75,7 +75,7 @@ export async function findLikedProducts(
   });
 }
 
-export async function porductLikedFindPerson(productId: number, newPrice: number) {
+export async function porductLikedFindPerson(productId: number) {
   return prisma.productLike.findMany({
     where: { productId },
     select: { userId: true },

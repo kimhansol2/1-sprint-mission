@@ -1,4 +1,3 @@
-import { boolean } from 'superstruct';
 import prisma from '../lib/prisma';
 import { notificationType, createNotificationType } from '../types/notificationType';
 
@@ -9,7 +8,11 @@ export const updateRead = async (notificationId: number): Promise<notificationTy
   });
 };
 
-export const create = async ({ userId, type, payload }: createNotificationType) => {
+export const create = async ({
+  userId,
+  type,
+  payload,
+}: createNotificationType): Promise<notificationType> => {
   return prisma.notification.create({
     data: { userId, type, payload },
   });
@@ -24,5 +27,15 @@ export const findNotifications = async (
       userId,
       ...(onlyUnread ? { read: false } : {}),
     },
+  });
+};
+
+export const isRead = async (userId: number, id: number): Promise<{ read: boolean } | null> => {
+  return prisma.notification.findFirst({
+    where: {
+      id,
+      userId,
+    },
+    select: { read: true },
   });
 };

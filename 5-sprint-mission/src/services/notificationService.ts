@@ -1,7 +1,13 @@
 import { Server } from 'socket.io';
 import { createNotificationType } from '../types/notificationType';
-import { create, findNotifications } from '../repository/notificationRepository';
+import {
+  create,
+  findNotifications,
+  isRead,
+  updateRead,
+} from '../repository/notificationRepository';
 import { porductLikedFindPerson } from '../repository/likeRepository';
+import { notificationDTO } from '../dto/notificationDTO';
 
 let io: Server;
 
@@ -16,14 +22,14 @@ export const createNotification = async ({ userId, type, payload }: createNotifi
   const notification = await create({ userId, type, payload });
   console.log('✅ 알림 저장 완료:', notification);
 
-  io.to(`user_${userId}`).emit('notification', notification);
+  io.to(`user:${userId}`).emit('notification', notification);
   console.log('📤 알림 전송됨: user_', userId);
 
   return notification;
 };
 
 export const notifyPriceChanged = async (productId: number, newPrice: number) => {
-  const likes = await porductLikedFindPerson(productId, newPrice);
+  const likes = await porductLikedFindPerson(productId);
 
   await Promise.all(
     likes.map(({ userId }) =>
@@ -41,4 +47,18 @@ export const notifyPriceChanged = async (productId: number, newPrice: number) =>
 
 export const findNotification = async (userId: number, onlyUnread: boolean) => {
   return findNotifications(userId, onlyUnread);
+};
+
+export const readNotify = async (userId: number, id: number) => {
+  const notification = await isRead(userId, id);
+  if (!notification) {
+    throw new Error('not found');
+  }
+
+  if (notification.read === false) {
+    const dataUpdate = await updateRead(id);
+    return new notificationDTO(dataUpdate.read);
+  }
+
+  return notification;
 };

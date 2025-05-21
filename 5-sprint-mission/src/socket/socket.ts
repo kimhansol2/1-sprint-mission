@@ -34,7 +34,7 @@ export function setupSocketIO(server: http.Server) {
   });
 
   io.on('connection', (socket) => {
-    notificationGateway(io, socket);
+    notificationGateway(socket);
   });
 
   return io;

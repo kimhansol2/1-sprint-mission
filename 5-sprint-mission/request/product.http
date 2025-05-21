@@ -20,10 +20,10 @@ GET http://localhost:3000/products/2afa799b-
 ###
 patch http://localhost:3000/products/1
 Content-Type: application/json
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzI5Njc4MiwiZXhwIjoxNzQ3MzAwMzgyfQ.57nqHINtr333v9g3A9j13Wov8LJC1SLdClj2z7uU0IY
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzM3MDg2MSwiZXhwIjoxNzQ3Mzc0NDYxfQ.-k3auvqtOpmtLb6GD3skbnTLd5rxvjtJRUYpb_xh20o
 
 {
-  "price":30000
+  "price":20000
 }
 
 ###
