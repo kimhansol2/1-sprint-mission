@@ -26,7 +26,6 @@ export async function countArticle(keyword?: string): Promise<number> {
 }
 
 export async function findArticle(
-  userId: number,
   page: number,
   pagesize: number,
   orderBy: string,
@@ -39,7 +38,6 @@ export async function findArticle(
     where: keyword ? { title: { contains: keyword } } : undefined,
     include: {
       ArticleLike: {
-        where: { userId: userId },
         select: { userId: true },
       },
     },

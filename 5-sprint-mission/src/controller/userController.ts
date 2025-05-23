@@ -70,16 +70,18 @@ export const loginUser: Controller = async (req, res) => {
   };
   await update(userUpdate);
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
   });
 
   res.send('로그인 성공');

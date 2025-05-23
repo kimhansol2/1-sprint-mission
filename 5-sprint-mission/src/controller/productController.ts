@@ -44,21 +44,21 @@ export const createProduct: Controller = async (req, res) => {
 };
 
 export const getProductList: Controller = async (req, res) => {
-  const user = req.user ?? null;
+  const user = req.user?.id ?? null;
   const queryParams = create(req.query, GetProductListParamsStruct) as ListQueryParams;
   if (!user && queryParams.likedOnly) {
     throw new UnauthorizedError('Unauthorized');
   }
-
-  const userId = user ? user.id : null;
+  const likedOnly = req.query.likedOnly === 'true';
 
   const listParams: ListQueryParams = {
     ...queryParams,
     orderBy: queryParams.orderBy ?? 'recent',
     keyword: queryParams.keyword || '',
+    likedOnly,
   };
 
-  const result = await list(userId, listParams);
+  const result = await list(user, listParams);
   res.send(result);
   return;
 };
@@ -120,7 +120,7 @@ export const getCommentList: Controller = async (req, res) => {
   await getById(productId);
   const result = await findCommentsByProduct(productId, cursor, limit);
 
-  res.send({ result });
+  res.send(result);
   return;
 };
 

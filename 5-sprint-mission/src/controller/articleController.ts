@@ -46,13 +46,8 @@ export const createArticle: Controller = async (req, res) => {
 
 export const getArticleList: Controller = async (req, res) => {
   const params = create(req.query, GetArticleListParamsStruct);
-  const userId = req.user?.id;
 
-  if (!userId) {
-    throw new UnauthorizedError('Unauthorized');
-  }
-
-  const article = await getList(userId, params);
+  const article = await getList(params);
 
   res.send(article);
 };

@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma';
-import { User, Prisma } from '@prisma/client';
+import { User } from '@prisma/client';
 import { UserCreateData, UserUpdateData } from '../dto/userDTO';
 
 export async function savedata(userUpdateData: UserCreateData): Promise<User> {
@@ -15,7 +15,7 @@ export async function findEmail(email: string): Promise<User | null> {
 }
 
 export async function findId(id: number): Promise<User | null> {
-  return prisma.user.findUnique({ where: { id } });
+  return prisma.user.findUnique({ where: { id: Number(id) } });
 }
 
 export async function updatedata(updatedField: UserUpdateData): Promise<User> {

@@ -14,11 +14,11 @@ import { ListQueryParams } from '../types/queryParams';
 import { notifyPriceChanged } from './notificationService';
 
 export async function save(productData: ProductCreateData) {
-  const user = await savedata(productData);
-  if (user) {
-    console.error('already signup');
+  const product = await savedata(productData);
+  if (!product) {
+    throw new Error('product 생성 실패');
   }
-  return user;
+  return product;
 }
 
 export async function list(userId: number | null, params: ListQueryParams) {
