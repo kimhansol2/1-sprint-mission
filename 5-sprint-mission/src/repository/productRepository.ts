@@ -1,6 +1,6 @@
-import prisma from '../lib/prisma.js';
+import prisma from '../lib/prisma';
 import { Product } from '@prisma/client';
-import { ProductCreateData, ProductUpdateData } from '../dto/productDTO.js';
+import { ProductCreateData, ProductUpdateData } from '../dto/productDTO';
 import { ListQueryParams } from '../types/queryParams';
 
 type ProductWithLike = Product & { ProductLike: { userId: number }[] };

@@ -1,6 +1,7 @@
 ###
 POST http://localhost:3000/articles
 Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzI4ODI0NywiZXhwIjoxNzQ3MjkxODQ3fQ.IHF_z7GvC3pcqwYzD2Ozms3eR819g6yqb5zuvoiQb_w
 
 {
   "title":"중고 티셔츠 팝니다",

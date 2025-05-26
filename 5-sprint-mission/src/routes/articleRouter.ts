@@ -1,5 +1,5 @@
 import express from 'express';
-import { asyncHandler } from '../lib/async-handler.js';
+import { asyncHandler } from '../lib/async-handler';
 import {
   createArticle,
   getArticleList,
@@ -9,7 +9,7 @@ import {
   createComment,
   getCommentList,
   articleLike,
-} from '../controller/articleController.js';
+} from '../controller/articleController';
 import { authenticate } from '../middlewares/authenticate';
 
 const articlesRouter = express.Router();

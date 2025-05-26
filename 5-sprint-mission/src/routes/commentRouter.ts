@@ -1,6 +1,6 @@
 import express from 'express';
-import { updateComment, deleteComment } from '../controller/commentsController.js';
-import { asyncHandler } from '../lib/async-handler.js';
+import { updateComment, deleteComment } from '../controller/commentsController';
+import { asyncHandler } from '../lib/async-handler';
 import { authenticate } from '../middlewares/authenticate';
 
 const commentRouter = express.Router();

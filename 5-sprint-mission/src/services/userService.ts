@@ -1,10 +1,10 @@
-import NotFoundError from '../lib/errors/NotFoundError.js';
-import UnauthorizedError from '../lib/errors/Unauthorized.js';
-import { userProduct } from '../repository/productRepository.js';
-import { findEmail, savedata, findId, updatedata } from '../repository/userRepository.js';
+import NotFoundError from '../lib/errors/NotFoundError';
+import UnauthorizedError from '../lib/errors/Unauthorized';
+import { userProduct } from '../repository/productRepository';
+import { findEmail, savedata, findId, updatedata } from '../repository/userRepository';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { User, UserCreateData, UserUpdateData, TransformedUser } from '../dto/userDTO.js';
+import { User, UserCreateData, UserUpdateData, TransformedUser } from '../dto/userDTO';
 
 interface getProductList {
   page: number;

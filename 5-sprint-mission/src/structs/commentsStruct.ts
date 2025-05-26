@@ -1,5 +1,5 @@
-import { nonempty, object, partial, string } from "superstruct";
-import { CursorParamsStruct } from "./commonStruct.js";
+import { nonempty, object, partial, string } from 'superstruct';
+import { CursorParamsStruct } from './commonStruct';
 
 export const CreateCommentBodyStruct = object({
   content: nonempty(string()),

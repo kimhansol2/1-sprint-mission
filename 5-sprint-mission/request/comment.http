@@ -1,9 +1,9 @@
 ###
-POST http://localhost:3000/Comments
+POST http://localhost:3000/articles/1/comments
 Content-Type: application/json
+Cookie:  accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NzM3MTEwMCwiZXhwIjoxNzQ3Mzc0NzAwfQ.EWovPmxioTMBF6rY1sO5Sz1YuWMprCp0cTW1Mv4TfNc
 
 {
-  "articleId":"3fe21240-8f86-4b43-9aed-f74376aaface",
   "content":"저요11"
 }
 

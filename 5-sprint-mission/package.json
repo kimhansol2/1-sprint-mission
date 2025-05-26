@@ -13,29 +13,26 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.9",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "prisma": "^6.4.0",
+    "socket.io": "^4.8.1",
     "superstruct": "^2.0.2",
-    "typescript": "^5.8.2",
     "uuid": "^11.1.0"
   },
   "scripts": {
-    "dev": "nodemon --watch src/main.ts",
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/app.ts",
     "start": "node dist/app.js",
     "build": "tsc"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "ts-node --esm prisma/seed.ts"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
-    "@types/passport": "^1.0.17",
-    "@types/passport-jwt": "^4.0.1",
-    "@types/passport-local": "^1.0.38"
+    "@types/jsonwebtoken": "^9.0.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

@@ -16,13 +16,17 @@ import {
   findCommentsByArticle,
 } from '../services/articleService';
 import { likeArticleFind } from '../services/likeServices';
-import { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import UnauthorizedError from '../lib/errors/Unauthorized';
 import { ArticleCreateData, articleResponseDTO, ArticleUpdateData } from '../dto/articleDTO';
 import { ArticleCommnetCreateData, articlecommentResponseDTO } from '../dto/commentDTO';
 import { createArticleLike } from '../dto/likeDTO';
 
-type Controller = (req: Request, res: Response, next: NextFunction) => Promise<void>;
+type Controller = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => Promise<void>;
 
 export const createArticle: Controller = async (req, res) => {
   const data = create(req.body, CreateArticleBodyStruct);

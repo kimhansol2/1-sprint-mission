@@ -15,6 +15,7 @@ import {
   updateUserStruct,
   userStruct,
   loginUserStruct,
+  notificationStruct,
 } from '../structs/userStructs';
 import { create } from 'superstruct';
 import { Request, Response, NextFunction } from 'express';
@@ -23,6 +24,7 @@ import { UserCreateData, userResponseDTO, userToken, UserUpdateData } from '../d
 import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants';
 import BadRequestError from '../lib/errors/BadRequestError';
 import { verifyRefreshToken } from '../lib/token';
+import { findNotification } from '../services/notificationService';
 
 type Controller = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
@@ -167,5 +169,17 @@ export const likeProducts: Controller = async (req, res) => {
   const { page, pagesize } = create(req.query, getUserParamsStruct);
   const result = await productLikedList(user.id, page, pagesize);
   res.json(result);
+  return;
+};
+
+export const myNotification: Controller = async (req, res) => {
+  const user = create(req.user, userStruct);
+  const { read } = create(req.query, notificationStruct);
+
+  const onlyUnread = read === false;
+
+  const result = await findNotification(user!.id, onlyUnread);
+
+  res.status(200).json(result);
   return;
 };

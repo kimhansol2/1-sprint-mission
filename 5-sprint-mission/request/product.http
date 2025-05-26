@@ -1,12 +1,14 @@
 ###
 POST http://localhost:3000/products
 Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzI5Njc4MiwiZXhwIjoxNzQ3MzAwMzgyfQ.57nqHINtr333v9g3A9j13Wov8LJC1SLdClj2z7uU0IY
 
 {
   "name":"하얀색 티셔츠",
   "description":"반팔 티셔츠",
   "price":10000,
-  "tags":"TSHIRT"
+  "tags":["TSHIRT"],
+  "images": ["https://example.com/image1.jpg"]
 }
 
 ###
@@ -16,13 +18,12 @@ GET http://localhost:3000/products?offset=0&limit=10&name=검은색&description=
 GET http://localhost:3000/products/2afa799b-
 
 ###
-patch http://localhost:3000/products/0e5aa6e8-63da-4e2d-8036-ac58c5adb062
+patch http://localhost:3000/products/1
 Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzM3MDg2MSwiZXhwIjoxNzQ3Mzc0NDYxfQ.-k3auvqtOpmtLb6GD3skbnTLd5rxvjtJRUYpb_xh20o
 
 {
-  "name":"검은색 티서츠",
-  "description":"봄에 입기 좋은 티셔츠",
-  "price":30000
+  "price":20000
 }
 
 ###

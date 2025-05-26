@@ -1,0 +1,4 @@
+### 상품 좋아요 요청
+POST http://localhost:3000/products/1/likes
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0NzI5NzI2OCwiZXhwIjoxNzQ3MzAwODY4fQ.GXXhvd8FeMSl72tfFh6_yUnAbJ9XvCXbN3haV1HRaMM

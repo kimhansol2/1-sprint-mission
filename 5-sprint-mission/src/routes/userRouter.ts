@@ -1,5 +1,5 @@
 import express from 'express';
-import { asyncHandler } from '../lib/async-handler.js';
+import { asyncHandler } from '../lib/async-handler';
 import {
   createUser,
   getUser,
@@ -8,13 +8,15 @@ import {
   userProductList,
   userNewToken,
   likeProducts,
-} from '../controller/userController.js';
+  myNotification,
+} from '../controller/userController';
 import { authenticate } from '../middlewares/authenticate';
 
 const userRouter = express.Router();
 
 userRouter.post('/', asyncHandler(createUser));
 userRouter.post('/login', asyncHandler(loginUser));
+userRouter.get('/notification', authenticate(), asyncHandler(myNotification));
 userRouter.get('/:id', authenticate({ optional: true }), asyncHandler(getUser));
 userRouter.patch('/:id', authenticate(), asyncHandler(updateUser));
 userRouter.get('/:id/products', authenticate(), asyncHandler(userProductList));
