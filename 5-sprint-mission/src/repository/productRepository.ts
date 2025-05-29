@@ -66,8 +66,8 @@ export async function updateData(productData: ProductUpdateData): Promise<Produc
   });
 }
 
-export async function deleteIdData(id: number): Promise<Product> {
-  return prisma.product.delete({
+export async function deleteIdData(id: number): Promise<void> {
+  await prisma.product.delete({
     where: { id },
   });
 }

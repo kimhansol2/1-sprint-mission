@@ -380,7 +380,6 @@ describe('상품 API 테스트', () => {
           },
         });
         productId = product.id;
-        console.log('productId', productId);
       });
       test('product 좋아요 테스트)', async () => {
         const response = await agent.post(`/products/${productId}/likes`);

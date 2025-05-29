@@ -85,9 +85,10 @@ export async function commentProduct(productComment: ProductCommnetCreateData) {
 export async function findCommentsByProduct(productId: number, cursor: number, limit: number) {
   const commentsWithCursor = await findCommentsByProductData(productId, cursor, limit + 1);
 
-  const comments = commentsWithCursor.slice(0, limit);
-  const cursorComment = commentsWithCursor[commentsWithCursor.length - 1];
-  const nextCursor = cursorComment ? cursorComment.id : null;
+  const hasNextPage = commentsWithCursor.length > limit;
+  const comments = hasNextPage ? commentsWithCursor.slice(0, limit) : commentsWithCursor;
+
+  const nextCursor = hasNextPage ? commentsWithCursor[limit].id : null;
 
   return {
     list: comments,
