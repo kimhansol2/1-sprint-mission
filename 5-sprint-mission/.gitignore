@@ -7,3 +7,4 @@ dist/
 README.MD
 request/
 .env.test
+coverage/
