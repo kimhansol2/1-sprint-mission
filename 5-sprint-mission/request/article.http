@@ -1,0 +1,28 @@
+###
+POST http://localhost:3000/articles
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Nzg5MjUxOCwiZXhwIjoxNzQ3ODk2MTE4fQ.KFuH-XhgCCLeO3we8ekPJ2OvolpIh-OPP_WIPPIsnDc; Path=/; HttpOnly; Secure;
+
+{
+  "title":"중고 티셔츠 팝니다",
+  "content":"내용"
+
+}
+
+###
+GET http://localhost:3000/articles
+
+###
+PATCH http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
+Content-Type: application/json
+
+{
+  "title":"중고 티셔츠 급처 흥정",
+  "content": "중고 티셔츠 싸게 팔아요"
+}
+
+###
+DELETE http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
+
+###
+GET http://localhost:3000/articles

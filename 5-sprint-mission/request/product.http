@@ -1,0 +1,30 @@
+###
+POST http://localhost:3000/products
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzI5Njc4MiwiZXhwIjoxNzQ3MzAwMzgyfQ.57nqHINtr333v9g3A9j13Wov8LJC1SLdClj2z7uU0IY
+
+{
+  "name":"하얀색 티셔츠",
+  "description":"반팔 티셔츠",
+  "price":10000,
+  "tags":["TSHIRT"],
+  "images": ["https://example.com/image1.jpg"]
+}
+
+###
+GET http://localhost:3000/products?offset=0&limit=10&name=검은색&description=댄디한
+
+###
+GET http://localhost:3000/products/2afa799b-
+
+###
+patch http://localhost:3000/products/1
+Content-Type: application/json
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzM3MDg2MSwiZXhwIjoxNzQ3Mzc0NDYxfQ.-k3auvqtOpmtLb6GD3skbnTLd5rxvjtJRUYpb_xh20o
+
+{
+  "price":20000
+}
+
+###
+delete http://localhost:3000/products/234bb1cc-2734-455f-92e3-631adfc23438

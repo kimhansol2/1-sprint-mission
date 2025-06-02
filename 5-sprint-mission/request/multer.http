@@ -1,0 +1,10 @@
+###
+POST http://localhost:3000/files
+Content-Type: multipart/form-data; boundary=Boundary01234567890123456789
+
+--Boundary01234567890123456789
+Content-Disposition: form-data;name="attachment";filename=product_market.jpg
+Content-Type: image/jpeg
+
+
+
