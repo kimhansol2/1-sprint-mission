@@ -18,6 +18,7 @@ export function authenticate(options = { optional: false }) {
     try {
       const { userId } = verifyAccessToken(accessToken);
       const user = await findId(userId);
+
       if (!user && !options.optional) {
         res.status(401).json({ message: 'Unauthorized -User not found' });
         return;

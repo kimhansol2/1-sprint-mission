@@ -8,6 +8,7 @@ import {
   update,
   getUserById,
   getProductList,
+  refreshToken,
 } from '../services/userService';
 import {
   CreateUserStruct,
@@ -25,6 +26,8 @@ import { REFRESH_TOKEN_COOKIE_NAME } from '../lib/constants';
 import BadRequestError from '../lib/errors/BadRequestError';
 import { verifyRefreshToken } from '../lib/token';
 import { findNotification } from '../services/notificationService';
+import { IdParamsStruct } from '../structs/commonStruct';
+import NotFoundError from 'lib/errors/NotFoundError';
 
 type Controller = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
@@ -56,11 +59,8 @@ export const loginUser: Controller = async (req, res) => {
   if (!user) {
     throw new UnauthorizedError('Unauthorized');
   }
-  const isPasswordValid = await verifyPassword(password, user.password);
+  await verifyPassword(password, user.password);
 
-  if (!isPasswordValid) {
-    throw new UnauthorizedError('Invalid credentials');
-  }
   const accessToken = createToken(user);
   const refreshToken = createToken(user, 'refresh');
 
@@ -70,28 +70,27 @@ export const loginUser: Controller = async (req, res) => {
   };
   await update(userUpdate);
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    sameSite: 'none',
-    secure: true,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
   });
 
-  res.send('로그인 성공');
+  res.json({ message: '로그인 성공' });
   return;
 };
 
 export const getUser: Controller = async (req, res) => {
-  if (!req.user) {
-    throw new Error('Not found User');
-  }
-  const users = create(req.user, userStruct);
-  const user = await getUserById(users.id);
+  const { id } = create(req.params, IdParamsStruct);
+  const user = await getUserById(id);
   res.json(userResponseDTO(user));
   return;
 };
@@ -111,7 +110,7 @@ export const updateUser: Controller = async (req, res) => {
 };
 
 export const userProductList: Controller = async (req, res) => {
-  const user = create(req.user, userStruct);
+  const user = create(req.params, IdParamsStruct);
   const { page, pagesize, orderBy = 'recent' } = create(req.query, getUserParamsStruct);
   const result = await getProductList(user.id, {
     page,
@@ -124,19 +123,16 @@ export const userProductList: Controller = async (req, res) => {
 };
 
 export const userNewToken: Controller = async (req, res) => {
-  const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
-  if (!refreshToken) {
+  const refreshTokens = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+  if (!refreshTokens) {
     throw new BadRequestError('Invalid refresh token');
   }
 
-  const { userId } = verifyRefreshToken(refreshToken);
+  const { userId } = verifyRefreshToken(refreshTokens);
 
   const user = await getUserById(userId);
-  if (!user) {
-    throw new BadRequestError('Invalid refresh token');
-  }
 
-  const token = await refreshToken(user.id, refreshToken);
+  const token = await refreshToken(user.id, refreshTokens);
 
   const TokenData: userToken = {
     id: user.id,

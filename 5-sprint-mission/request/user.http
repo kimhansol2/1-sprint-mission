@@ -22,7 +22,7 @@ Content-Type: application/json
 ### 알림 목록 조회 (전체 또는 읽지 않은 것만 조회)
 GET http://localhost:3000/users/notification?
 Content-Type: application/json
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzMwMDg4MSwiZXhwIjoxNzQ3MzA0NDgxfQ.w3IMFpOljXszobk1DdsIEEoqYpBW-5-jswcXWUY6jGw
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Nzk4OTY3NSwiZXhwIjoxNzQ3OTkzMjc1fQ.gHuMqMhYrEi3QmdO-NDnu38Qn2pgvx5ldmt8jK2RE2g;
 
 
 ### 읽은 알람 읽음처리 

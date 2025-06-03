@@ -70,7 +70,7 @@ export async function getUser(email: string, password: string) {
 export async function verifyPassword(inputPassword: string, savedPassword: string) {
   const isValid = await bcrypt.compare(inputPassword, savedPassword);
   if (!isValid) {
-    throw new UnauthorizedError('Unauthorized');
+    throw new UnauthorizedError('Invalid credentials');
   }
 
   return isValid;

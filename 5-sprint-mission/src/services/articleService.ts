@@ -24,20 +24,17 @@ export async function save(article: ArticleCreateData) {
   return await savedata(article);
 }
 
-export async function getList(
-  userId: number,
-  { page, pagesize, orderBy = 'recent', keyword }: GetListParams,
-) {
+export async function getList({ page, pagesize, orderBy = 'recent', keyword }: GetListParams) {
   const totalCount = await countArticle(keyword);
 
   page = page > 0 ? page : 1;
   pagesize = pagesize > 0 ? pagesize : 10;
 
-  const articles = await findArticle(userId, page, pagesize, orderBy, keyword);
+  const articles = await findArticle(page, pagesize, orderBy, keyword);
   return {
     list: articles.map((article) => ({
       ...article,
-      isLiked: userId ? article.ArticleLike.length > 0 : false,
+      isLiked: article.ArticleLike.length > 0,
       ArticleLike: undefined,
     })),
     totalCount,

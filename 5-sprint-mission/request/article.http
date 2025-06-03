@@ -1,15 +1,16 @@
 ###
 POST http://localhost:3000/articles
 Content-Type: application/json
-Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTc0NzI4ODI0NywiZXhwIjoxNzQ3MjkxODQ3fQ.IHF_z7GvC3pcqwYzD2Ozms3eR819g6yqb5zuvoiQb_w
+Cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0Nzg5MjUxOCwiZXhwIjoxNzQ3ODk2MTE4fQ.KFuH-XhgCCLeO3we8ekPJ2OvolpIh-OPP_WIPPIsnDc; Path=/; HttpOnly; Secure;
 
 {
   "title":"중고 티셔츠 팝니다",
-  "content":"팔아요 중고티"
+  "content":"내용"
+
 }
 
 ###
-GET http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
+GET http://localhost:3000/articles
 
 ###
 PATCH http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
@@ -24,4 +25,4 @@ Content-Type: application/json
 DELETE http://localhost:3000/articles/c94a1af8-2ae5-432c-b7ab-7581e22474d4
 
 ###
-GET http://localhost:3000/articles?offset=0&limit=10&title=중고+티셔츠
+GET http://localhost:3000/articles

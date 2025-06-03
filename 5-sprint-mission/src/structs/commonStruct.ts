@@ -23,7 +23,7 @@ export const PageParamsStruct = object({
   pagesize: defaulted(integerString, 10),
   orderBy: defaulted(enums(['recent', 'id'] as const), 'recent'),
   keyword: optional(nonempty(string())),
-  likedOnly: optional(boolean()),
+  likedOnly: optional(coerce(boolean(), string(), (value) => value === 'true')),
 });
 
 export type PageParams = typeof PageParamsStruct.type;

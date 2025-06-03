@@ -31,12 +31,9 @@ type Controller = (
 export const createArticle: Controller = async (req, res) => {
   const data = create(req.body, CreateArticleBodyStruct);
 
-  if (!req.user) {
-    throw new UnauthorizedError('Unauthorized');
-  }
   const articleData: ArticleCreateData = {
     ...data,
-    userId: req.user.id,
+    userId: req.user!.id,
   };
 
   const article = await save(articleData);
@@ -46,13 +43,8 @@ export const createArticle: Controller = async (req, res) => {
 
 export const getArticleList: Controller = async (req, res) => {
   const params = create(req.query, GetArticleListParamsStruct);
-  const userId = req.user?.id;
 
-  if (!userId) {
-    throw new UnauthorizedError('Unauthorized');
-  }
-
-  const article = await getList(userId, params);
+  const article = await getList(params);
 
   res.send(article);
 };
@@ -88,11 +80,7 @@ export const createComment: Controller = async (req, res, next) => {
   const { id: articleId } = create(req.params, IdParamsStruct);
   const { content } = create(req.body, CreateCommentBodyStruct);
 
-  const userId = req.user?.id;
-
-  if (!userId) {
-    throw new UnauthorizedError('Unauthorized');
-  }
+  const userId = req.user!.id;
 
   await getById(articleId);
 

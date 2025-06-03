@@ -13,10 +13,11 @@ export async function findCommentsByArticles(
   limit: number,
 ): Promise<Comment[]> {
   return prisma.comment.findMany({
-    cursor: cursor ? { id: cursor } : undefined,
-    take: limit,
     where: { articleId },
-    orderBy: { createdAt: 'desc' },
+    cursor: cursor ? { id: cursor } : undefined,
+    skip: cursor ? 1 : 0,
+    take: limit,
+    orderBy: { id: 'asc' },
   });
 }
 
