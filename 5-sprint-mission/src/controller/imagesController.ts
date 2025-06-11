@@ -8,12 +8,15 @@ import { uploadImageToS3 } from '../lib/upload';
 
 const ALLOWED_MIME_TYPES = ['image/png', 'image/jpg', 'image/jpeg'];
 const FILE_SIZE_LIMIT = 5 * 1024 * 1024;
+// 허용할 이미지 타입 설정
+// 업로드 최대 용량은 5MB
 
 export const upload = multer({
   storage:
     NODE_ENV === 'production'
-      ? multer.memoryStorage()
+      ? multer.memoryStorage() //운영 환경에 사용
       : multer.diskStorage({
+          // 개발 환경이면 사용
           destination(req: Request, file: Express.Multer.File, cb: Function) {
             cb(null, PUBLIC_PATH);
           },
@@ -32,7 +35,7 @@ export const upload = multer({
     if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       const err = new BadRequestError('Only png, jpeg, and jpg are allowed');
       return cb(err);
-    }
+    } //파일 타입 필터링 PNG, JPG, JPEG만 허용
 
     cb(null, true);
   },
@@ -48,8 +51,8 @@ export async function uploadImage(req: Request, res: Response) {
 
   if (NODE_ENV === 'production') {
     try {
-      const url = await uploadImageToS3(file);
-      res.status(200).json({ url });
+      const url = await uploadImageToS3(file); //S3 업로드
+      res.status(200).json({ url }); //S3 URL 반환
       return;
     } catch (err) {
       console.error(err);
@@ -58,7 +61,7 @@ export async function uploadImage(req: Request, res: Response) {
     }
   }
 
-  const url = `${BASE_URL}/uploads/${file.filename}`;
+  const url = `${BASE_URL}/uploads/${file.filename}`; //개발 환경에서는 로컬에 저장된 이미지 경로를 URL로 반환
   res.status(200).send({ url });
   return;
 }

@@ -8,3 +8,4 @@ README.MD
 request/
 .env.test
 coverage/
+.env copy
