@@ -13,7 +13,7 @@ on:
 
 jobs:
   test:
-    runs-on: upuntu-latest # github에서 제공하는 ubuntu 리눅스 머신에서 실행
+    runs-on: ubuntu-latest # github에서 제공하는 ubuntu 리눅스 머신에서 실행
 
     # Postgresql 서비스를 docker 컨테이너로 함께 실행
     services:
@@ -31,12 +31,12 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432//testdb
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
       BASE_URL: http://localhost:3000
       PORT: 3000
 
-      JWS_ACCESS_TOKEN_SECRET: ${{secrets.JWS_ACCESS_TOKEN_SECRET}}
-      JWS_REFRESH_TOKEN_SECRET: ${{secrets.JWS_REFRESH_TOKEN_SECRET}}
+      JWT_ACCESS_TOKEN_SECRET: ${{secrets.JWS_ACCESS_TOKEN_SECRET}}
+      JWT_REFRESH_TOKEN_SECRET: ${{secrets.JWS_REFRESH_TOKEN_SECRET}}
 
       AWS_REGION: ap-northeast-2
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
