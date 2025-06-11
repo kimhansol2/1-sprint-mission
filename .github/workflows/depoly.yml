@@ -18,7 +18,10 @@ jobs:
           key: ${{secrets.EC2_PRIVATE_KEY}}
           port: 22
           script: |
+            set -e
             cd ~/1-sprint-mission/5-sprint-mission # EC2 인스턴스 내 프로젝트 경로로 진입
+            git reset --hard
+            git clean -fd
             git pull origin main # 코드 최신화
             npm install
             npm run build
