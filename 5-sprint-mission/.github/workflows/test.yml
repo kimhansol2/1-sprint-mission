@@ -1,65 +1,11 @@
-# 이  github actions 워크플로우는 main 브랜치로의 푸시 또는 pull request가 생기면 자동으로 실행
-# 통합 테스트를 위해 postgresql 데이터베이스를 함께 실행한다.
-
-name: Test
+name: Manual Trigger Test
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch: # 수동 실행용 트리거
 
 jobs:
-  test:
-    runs-on: ubuntu-latest # github에서 제공하는 ubuntu 리눅스 머신에서 실행
-
-    # Postgresql 서비스를 docker 컨테이너로 함께 실행
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
-        options: >
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 8s
-          --health-retries 5
-    env:
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
-      BASE_URL: http://localhost:3000
-      PORT: 3000
-
-      JWT_ACCESS_TOKEN_SECRET: ${{secrets.JWT_ACCESS_TOKEN_SECRET}}
-      JWT_REFRESH_TOKEN_SECRET: ${{secrets.JWT_REFRESH_TOKEN_SECRET}}
-
-      AWS_REGION: ap-northeast-2
-      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-      AWS_S3_BUCKET_NAME: sprintmission10
-
+  ping:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22.13.0'
-
-      - name: Install dependencies
-        run: npm install # 프로젝트 의존성 설치
-
-      - name: Apply DB Schema
-        run: npm run prisma:migrate #Prisma 마이그레이션 적용
-
-      - name: Type Check
-        run: npm run typecheck #TypeScript 타입 검사 수행
-
-      - name: Run Tests
-        run: npm run test:ci #테스트 실행
+      - name: Hello
+        run: echo "🎉 GitHub Actions 수동 실행 성공!"
