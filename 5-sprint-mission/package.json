@@ -28,7 +28,7 @@
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:deploy": "npx prisma migrate deploy && npx prisma generate",
     "test:local": "dotenv -e .env.test -- prisma migrate dev && dotenv -e .env.test -- jest -i --coverage",
-    "test:ci":"jest"
+    "test:ci": "jest --runInBand --forceExit"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
