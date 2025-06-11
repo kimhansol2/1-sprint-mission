@@ -1,10 +1,11 @@
 node_modules
-.env
+.env*
 ERD.MD
 study.MD
 tests
 dist/
 README.MD
 request/
-.env.test
 coverage/
+test1.yml
+
