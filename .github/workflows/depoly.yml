@@ -19,6 +19,7 @@ jobs:
           port: 22
           script: |
             cd ~/1-sprint-mission/5-sprint-mission # EC2 인스턴스 내 프로젝트 경로로 진입
+            git reset --hard HEAD
             git pull origin main # 코드 최신화
             chmod +x ./infra/ec2/start.sh
             ./infra/ec2/start.sh
