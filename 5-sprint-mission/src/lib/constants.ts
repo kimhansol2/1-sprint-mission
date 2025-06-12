@@ -1,6 +1,8 @@
 import path from 'path';
 import dotenv from 'dotenv';
-dotenv.config();
+
+const envPath = `.env.${process.env.NODE_ENV || 'development'}`;
+dotenv.config({ path: envPath });
 
 if (!process.env.JWT_ACCESS_TOKEN_SECRET) {
   throw new Error('JWT_ACCESS_TOKEN_SECRET  환경 변수가 설정되지 않았습니다.');
@@ -15,7 +17,6 @@ export const REFRESH_TOKEN_COOKIE_NAME: string = 'refreshToken';
 export const DATABASE_URL: string | undefined = process.env.DATABASE_URL;
 export const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 export const JWT_REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
-export const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 export const NODE_ENV: string = process.env.NODE_ENV || 'development';
 export const PUBLIC_PATH: string = path.resolve('public');
 export const STATIC_PATH: string = '/uploads';
