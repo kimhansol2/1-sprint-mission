@@ -5,9 +5,7 @@ echo "Docker 설치"
 sudo yum update -y
 sudo dnf install -y docker
 sudo systemctl enable --now docker
-sudo service docker start
 sudo usermod -aG docker $USER
-newgrp docker
 
 echo "Docker Compose 설치" 
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
