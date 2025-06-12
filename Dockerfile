@@ -1,8 +1,10 @@
 #빌드 스테이지
 FROM node:20 AS build-stage
 WORKDIR /build
-COPY . .
-RUN npm ci && npm run build
+COPY 5-sprint-mission/package*.json ./
+RUN npm ci 
+COPY 5-sprint-mission ./
+RUN npm run build
 
 #실행 스테이지
 FROM node:20-slim

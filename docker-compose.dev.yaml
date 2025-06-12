@@ -3,20 +3,21 @@ services:
   server:
     image: ksot1233/express
     build:
-      tags:
-        - ksot1233/express:latest
+      context: .
+      dockerfile: Dockerfile
       args:
         - NODE_VERSION=20.12.1
-      dockerfile: Dockerfile
+      tags:
+        - ksot1233/express:latest
       pull: true
-      context: .
+
     container_name: express-app
     env_file:
       - .env
     environment:
       - SERVER_PORT=3000
     ports:
-      - '3000:3000'
+      - "3000:3000"
     networks:
       - network-a
     volumes:
@@ -26,7 +27,7 @@ services:
     env_file:
       - .env.db
     ports:
-      - '5434:5432'
+      - "5434:5432"
     networks:
       - network-a
 
