@@ -3,8 +3,8 @@ set -eux
 
 echo "Docker 설치"
 sudo yum update -y
-sudo amazon-linux-extras enable docker
-sudo yum install -y docker
+sudo dnf install -y docker
+sudo systemctl enable --now docker
 sudo service docker start
 sudo usermod -aG docker $USER
 newgrp docker
