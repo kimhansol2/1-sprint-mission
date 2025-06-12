@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 
-cd "$(dirname "$0")/../../../"
+cd "$(dirname "$0")/../../../../"
 
 echo "Docker 설치"
 sudo yum update -y
