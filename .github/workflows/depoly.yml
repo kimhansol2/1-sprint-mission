@@ -23,5 +23,6 @@ jobs:
             npm install
             npm run build
             npm run prisma:deploy
-            pm2 reload mission
+            pm2 start ecosystem.config.js --only mission11 || pm2 restart mission11
+            pm2 save
             echo "Deployment successful!"

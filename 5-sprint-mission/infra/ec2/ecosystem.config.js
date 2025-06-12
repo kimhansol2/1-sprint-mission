@@ -1,9 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: 'mission10',
-      script: 'npx',
-      args: 'ts-node src/main.ts',
+      name: 'mission11',
+      script: 'dist/main.js',
       env: {
         NODE_ENV: 'production',
       },
