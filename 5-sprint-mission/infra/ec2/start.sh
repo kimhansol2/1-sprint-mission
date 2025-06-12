@@ -27,5 +27,5 @@ cat /tmp/env.json \
   > .env.production
 
 echo "Docker Compose 실행"
-docker compose -f docker-compose.prod.yml down || true
-docker compose -f docker-compose.prod.yml up -d --build    
+docker-compose -f docker-compose.prod.yml down || true
+docker-compose -f docker-compose.prod.yml up -d --build    
